@@ -18,6 +18,22 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
       return amt;
     }
 
+    $scope.allTotal = function(){
+      var amt = 0;
+      angular.forEach(people,function(person){
+        amt += $scope.total(person);
+      })
+      return amt;
+    }
+
+    $scope.average = function(){
+      return $scope.allTotal() / people.length;
+    }
+
+    $scope.getBalance =function(person){
+      return $scope.total(person) - $scope.average();
+    }
+
     $scope.addItem = function(person){
       person.items.push(person.input);
     }

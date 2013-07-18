@@ -1,25 +1,43 @@
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <td ng-repeat="person in people">
-        {{person.name}} <br/>
-        Total: {{total(person) | currency}}
-      </td>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td ng-repeat="person in people">
-        <ul>
-          <li ng-repeat="item in person.items">
-            {{item|currency}}
-          </li>
-        </ul>
-        <form ng-submit="addItem(person)">
-          <input type="number" ng-model="person.input" step="0.01" placeholder="add new payment">
-          <input class="btn-primary" type="submit" value="add">
-        </form>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="row">
+  <div class="span10">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <td ng-repeat="person in people">
+            {{person.name}} <br/>
+            Total: {{total(person) | currency}} <br/>
+            Balance: {{getBalance(person) | currency}}
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td ng-repeat="person in people">
+            <ul>
+              <li ng-repeat="item in person.items">
+                {{item|currency}}
+              </li>
+            </ul>
+            <form ng-submit="addItem(person)">
+              <input type="number" ng-model="person.input" step="0.01" placeholder="0.00">
+              <input class="btn-primary" type="submit" value="add">
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="span2">
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <td>Total: {{allTotal() | currency}}</td>
+        </tr>
+        <tr>
+          <td>Average: {{average() | currency}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+

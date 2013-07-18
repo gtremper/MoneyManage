@@ -12,10 +12,14 @@ body {
 }
 
 input[type=number]{
-    width: 100px;
+    width: 80px;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     margin-bottom: 0px;
     height: 30px;
+}
+
+form{
+    margin-bottom: 5px;
 }
