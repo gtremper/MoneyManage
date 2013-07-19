@@ -5,10 +5,14 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
     people.push({name:'Graham', items:[1.99,4.33]});
     people.push({name:'Becca', items:[2.33,1.99,4.33]});
     people.push({name:'Oliver', items:[1.11,4.33]});
-    people.push({name:'Max', items:[1.99,4.33, 234.34]});
+    people.push({name:'Max', items:[1.99,4.33, 23.34]});
     people.push({name:'Jon', items:[1.99]});
-
     $scope.people = people;
+
+    $scope.opts = {
+      backdropFade: true,
+      dialogFade:true
+    };
 
     $scope.total = function(person){
       var amt = 0;
@@ -35,6 +39,21 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
     }
 
     $scope.addItem = function(person){
+      console.log(person);
+      console.log(person.input);
+      if(!person.input){
+        return;
+      }
       person.items.push(person.input);
+      person.input = "";
     }
+
+    $scope.open = function(person){
+      $scope.newItemModal = true;
+      $scope.currentUser = person;
+    }
+
+    $scope.close = function () {
+      $scope.newItemModal = false;
+    };
   }]);

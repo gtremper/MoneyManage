@@ -1,43 +1,50 @@
-<div class="row">
-  <div class="span10">
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <td ng-repeat="person in people">
-            {{person.name}} <br/>
-            Total: {{total(person) | currency}} <br/>
-            Balance: {{getBalance(person) | currency}}
-          </td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td ng-repeat="person in people">
-            <ul>
-              <li ng-repeat="item in person.items">
-                {{item|currency}}
-              </li>
-            </ul>
-            <form ng-submit="addItem(person)">
-              <input type="number" ng-model="person.input" step="0.01" placeholder="0.00">
-              <input class="btn-primary" type="submit" value="add">
-            </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+
+<h2>
+  Average: {{average() | currency}}  <span class="pull-right">Total: {{allTotal() | currency}}</span>
+</h2>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <td ng-repeat="person in people">
+        {{person.name}} <br/>
+        Total: {{total(person) | currency}} <br/>
+        Balance: {{getBalance(person) | currency}}
+      </td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td ng-repeat="person in people">
+        <ul>
+          <li ng-repeat="item in person.items">
+            {{item|currency}}
+          </li>
+        </ul>
+        <form ng-submit="addItem(person)">
+          <input type="number" ng-model="person.input" min="0" step="0.01" placeholder="0.00">
+          <input class="btn-primary" type="submit" value="add">
+        </form>
+        <button class="btn" ng-click="open(person)">Modal</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div modal="newItemModal" close="close()" options="opts">
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="close()">&times;</button>
+    <h3>Add Transaction!</h3>
   </div>
-  <div class="span2">
-    <table class="table table-bordered">
-      <tbody>
-        <tr>
-          <td>Total: {{allTotal() | currency}}</td>
-        </tr>
-        <tr>
-          <td>Average: {{average() | currency}}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="modal-body">
+    <form ng-submit="addItem(person)">
+      <input type="number" ng-model="currentUser.input" min="0" step="0.01" placeholder="0.00">
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning cancel pull-left" ng-click="close()">Cancel</button>
+    <button class="btn btn-success" ng-click="addItem(currentUser);close()">Add</button>
   </div>
 </div>
+
+
 
