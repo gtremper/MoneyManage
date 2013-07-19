@@ -18,9 +18,14 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
   $scope.tab = '';
   $scope.anim_dir = '';
 
-  $scope.currentUser = ""
   $scope.setCurrentUser = function(user){
     $scope.currentUser = user;
+  }
+
+  $scope.viewTrans = function(trans){
+    $scope.currentTrans = trans;
+    $scope.changeTab('view','view-left');
+    console.log(trans);
   }
 
   $scope.allOwnersExcept = function(person){
@@ -69,6 +74,20 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
     return $scope.total(person) - due;
   }
 
+  /* View Stuff */
+
+  $scope.editSplit = function(name,split){
+    if (split.indexOf(name) === -1) {
+      split.push(name);
+    } else {
+      split.splice(split.indexOf(name), 1);
+    }
+    console.log(split)
+  }
+
+
+  /* Add stuff */
+
   $scope.addItem = function(person){
     if(!person.inputAmount){
       return;
@@ -87,8 +106,6 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
     }
     $scope.tab = change;
   }
-
-  /* Modal stuff */
 
   $scope.checkedNames = $scope.ownerNames.slice(0);
   $scope.toggleCheck = function (person) {

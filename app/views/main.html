@@ -1,10 +1,10 @@
 <div ng-switch on="tab" ng-animate="anim_dir">
-  <div ng-switch-default>
-    <h2> Total: {{allTotal() | currency}} </h2>
+  <div ng-switch-default class="tab-pane">
+    <h1> Total: {{allTotal() | currency}} </h1>
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th ng-repeat="person in owners">
+          <th ng-repeat="person in owners" style="min-width:33%">
             {{person.name}} <br/>
             Total: {{total(person) | currency}} <br/>
             Balance: <span ng-class="{red:getBalance(person)<0}">{{getBalance(person) | currency}}</span>
@@ -16,29 +16,26 @@
           <td ng-repeat="person in owners">
             <ul ng-show="getItems(person).length">
               <li ng-repeat="item in getItems(person)">
-                <span class="money_bullet">{{item.amount|currency}}</span> <a href="#">{{item.title}}<span ng-hide="item.title">Untitled<span></a>
+                <span class="money_bullet">{{item.amount|currency}}</span> <a ng-click="viewTrans(item)">{{item.title}}<span ng-hide="item.title">Untitled<span></a>
               </li>
             </ul>
             <div ng-hide="getItems(person).length">
               No transactions
             </div>
             <button class="btn" ng-click="changeTab('add','view-right');setCurrentUser(person)">Add</button>
-            <!--
-            <button class="btn" ng-click="changeTab('view','view-left');setCurrentUser(person)">View</button>
-            -->
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div ng-switch-when="add" class="addTransaction">
+  <div ng-switch-when="add" class="addTransaction tab-pane">
 
-    <h2>Add Transaction</h2>
+    <h1>Add Transaction</h1>
     <form class="form-horizontal" ng-submit="addItem(currentUser)">
       <div class="control-group">
         <label class="control-label" for="title">Title:</label>
         <div class="controls">
-          <input type="text" id="title" placeholder="Enter title" ng-model="currentUser.inputTitle">
+          <input type="text" id="title" placeholder="Enter title" ng-model="currentUser.inputTitle" autofocus>
         </div>
       </div>
       <div class="control-group">
@@ -48,9 +45,9 @@
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label" for="title">Amount:</label>
+        <label class="control-label" for="amount">Amount:</label>
         <div class="controls">
-          <input type="number" ng-model="currentUser.inputAmount" min="0" step="0.01" placeholder="0.00">
+          <input id="amount" type="number" ng-model="currentUser.inputAmount" min="0" step="0.01" placeholder="0.00">
         </div>
       </div>
       <div class="control-group">
@@ -71,35 +68,31 @@
     </div>
 
   </div>
-  <div ng-switch-when="view">
-    <h2>View Transaction</h2>
-    <button class="btn" ng-click="changeTab('','view-right')">Home</button>
-  </div>
-  
-  <!--
-  <a ng-href="#/add">New Trans</a>
-  <a ng-href="#/view">view Trans</a>
-  -->
-  
+  <div ng-switch-when="view" class="tab-pane">
 
-  <div modal="newItemModal" close="close()" options="opts">
-    <div class="modal-header">
-      <button type="button" class="close" ng-click="close()">&times;</button>
-      <h3>Add Transaction!</h3>
+    <h1>{{currentTrans.title}}<span ng-hide="currentTrans.title">Untitled<span> <small>on {{currentTrans.date | date:'mediumDate'}}</small></h1>
+    <p>{{currentTrans.description}}<span ng-hide="currentTrans.description">No description.</span></p>
+    <h3>{{currentTrans.amount | currency}} <small>split between...</small></h3>
+    <ul>
+      <li ng-repeat="person in currentTrans.split">
+        {{person}}
+      </li>
+    </ul>
+
+    <div class="well">
+      <input type="text" ng-model="currentTrans.title"> <br>
+      <textarea ng-model="currentTrans.description"></textarea> <br>
+      <input type="number" ng-model="currentTrans.amount" min="0" step="0.01">
+      <label class="checkbox">
+        <input type="checkbox" ng-click="editSplit(currentTrans.owner,currentTrans.split)" ng-checked="currentTrans.split.indexOf(currentTrans.owner)>=0"> Me
+      </label>
+      <label class="checkbox" ng-repeat="owner in allOwnersExcept(currentUser)">
+        <input type="checkbox" ng-click="editSplit(owner.name,currentTrans.split)" ng-checked="currentTrans.split.indexOf(owner.name)>=0"> {{owner.name}}
+      </label>
     </div>
-    <div class="modal-body">
-      <form ng-submit="addItem(currentUser)">
-        <input type="number" ng-model="currentUser.input" min="0" step="0.01" placeholder="0.00"> <br/><br/>
-        Split between me and...<br/><br/>
-        <label class="checkbox" ng-repeat="owner in allOwnersExcept(currentUser)">
-          <input type="checkbox" ng-click="toggleCheck(owner)" ng-checked="checkedNames.indexOf(  owner.name) != -1"> {{owner.name}}
-        </label>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-warning cancel pull-left" ng-click="close()">Cancel</button>
-      <button class="btn btn-success" ng-click="addItem(currentUser)">Add</button>
-    </div>
+
+    <button class="btn" ng-click="changeTab('','view-right')">Back</button>
+
   </div>
 </div>
 
