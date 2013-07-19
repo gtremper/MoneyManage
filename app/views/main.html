@@ -5,8 +5,8 @@
 <table class="table table-bordered">
   <thead>
     <tr>
-      <td ng-repeat="person in people">
-        {{person.name}} <br/>
+      <td ng-repeat="person in owners">
+        {{person}} <br/>
         Total: {{total(person) | currency}} <br/>
         Balance: {{getBalance(person) | currency}}
       </td>
@@ -14,10 +14,10 @@
   </thead>
   <tbody>
     <tr>
-      <td ng-repeat="person in people">
+      <td ng-repeat="person in owners">
         <ul>
-          <li ng-repeat="item in person.items">
-            {{item|currency}}
+          <li ng-repeat="item in getItems(person)">
+            {{item.amount|currency}}
           </li>
         </ul>
         <form ng-submit="addItem(person)">
