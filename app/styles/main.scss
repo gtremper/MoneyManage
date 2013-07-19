@@ -18,6 +18,12 @@ textarea{
     resize: vertical;
 }
 
+tbody ul{
+    list-style-type: none;
+    padding: 0;
+    margin-left: 0px;
+}
+
 
 h2{
     margin-left: 20px;
@@ -26,6 +32,14 @@ h2{
 
 .red{
     color: #ff0000;
+}
+.green{
+    color: #216C2A;
+}
+.money_bullet{
+    @extend .green;
+    display: inline-block;
+    width:60px;
 }
 
 .addTransaction{

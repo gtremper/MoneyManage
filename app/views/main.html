@@ -15,8 +15,8 @@
         <tr>
           <td ng-repeat="person in owners">
             <ul ng-show="getItems(person).length">
-              <li ng-repeat="item in getItems(person)" ng-animate="'slide'">
-                {{item.amount|currency}} {{item.split}}
+              <li ng-repeat="item in getItems(person)">
+                <span class="money_bullet">{{item.amount|currency}}</span> <a href="#">{{item.title}}<span ng-hide="item.title">Untitled<span></a>
               </li>
             </ul>
             <div ng-hide="getItems(person).length">
