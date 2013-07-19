@@ -2,12 +2,11 @@
 
 app.controller('MainCtrl', ['$scope', function ($scope) {
   /* Hardcoded values for test */
-  function transaction(owner,split,amount){
+  function transaction(owner,split,title,description,amount){
     this.owner = owner;
     this.split = split;
-    if (this.split.indexOf(owner)===-1){
-      this.split.push(owner);
-    }
+    this.title = title;
+    this.description = description
     this.amount = amount;
     this.date = new Date();
   }
@@ -15,6 +14,14 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
   $scope.transactions = [];
   $scope.owners = [{name:'Graham'},{name:'Max'},{name:'Oli'}];
   $scope.ownerNames = _.map($scope.owners,function(own){return own.name;});
+
+  $scope.tab = '';
+  $scope.anim_dir = '';
+
+  $scope.currentUser = ""
+  $scope.setCurrentUser = function(user){
+    $scope.currentUser = user;
+  }
 
   $scope.allOwnersExcept = function(person){
     return _.reject($scope.owners,function(own){return own.name === person.name;});
@@ -62,32 +69,30 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
     return $scope.total(person) - due;
   }
 
-  $scope.addItemAll = function(person){
-    if(!person.input){
+  $scope.addItem = function(person){
+    if(!person.inputAmount){
       return;
     }
-    $scope.transactions.push(new transaction(person.name, $scope.ownerNames.slice(0), person.input));
-    person.input = "";
+    $scope.transactions.push(new transaction(person.name, $scope.checkedNames, person.inputTitle,
+                                            person.inputDescription, person.inputAmount));
+    $scope.checkedNames = $scope.ownerNames.slice(0);
+    person.inputAmount = "";
+    person.inputDescription = "";
+    person.inputTitle = "";
   }
 
-  $scope.addItem = function(person){
-    if(!person.input){
-      return;
+  $scope.changeTab = function(change,anim){
+    if (anim !== undefined){
+      $scope.anim_dir = anim;
     }
-    $scope.transactions.push(new transaction(person.name, $scope.checkedNames, person.input));
-    $scope.checkedNames = $scope.ownerNames.slice(0);
-    $scope.close();
+    $scope.tab = change;
   }
 
   /* Modal stuff */
-  $scope.opts = {
-    backdropFade: true,
-    dialogFade:true
-  };
 
   $scope.checkedNames = $scope.ownerNames.slice(0);
-  $scope.toggleCheck = function (owner) {
-    var name = owner.name
+  $scope.toggleCheck = function (person) {
+    var name = person.name
     if ($scope.checkedNames.indexOf(name) === -1) {
       $scope.checkedNames.push(name);
     } else {
@@ -96,12 +101,4 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
     console.log($scope.checkedNames)
   };
 
-  $scope.open = function(person){
-    $scope.newItemModal = true;
-    $scope.currentUser = person;
-  }
-
-  $scope.close = function () {
-    $scope.newItemModal = false;
-  };
 }]);
