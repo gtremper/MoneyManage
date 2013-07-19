@@ -36,7 +36,7 @@
     <h3>Add Transaction!</h3>
   </div>
   <div class="modal-body">
-    <form ng-submit="addItem(person)">
+    <form ng-submit="addItem(currentUser);close();">
       <input type="number" ng-model="currentUser.input" min="0" step="0.01" placeholder="0.00">
     </form>
   </div>

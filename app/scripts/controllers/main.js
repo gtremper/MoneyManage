@@ -39,8 +39,6 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
     }
 
     $scope.addItem = function(person){
-      console.log(person);
-      console.log(person.input);
       if(!person.input){
         return;
       }
