@@ -11,6 +11,18 @@ body {
     color: #333;
 }
 
+/* Main Page */
+.signin-container{
+    margin: 0 auto;
+    width:600px;
+}
+
+.signin-toggle{
+    font-size: 14px;
+    font-weight: normal;
+}
+
+/* App */
 textarea{
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -32,8 +44,6 @@ a{
 table{
     table-layout:fixed;
 }
-
-
 
 .red{
     color: #ff0000;

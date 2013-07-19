@@ -85,6 +85,11 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
     console.log(split)
   }
 
+  $scope.deleteTransaction = function(trans){
+    $scope.transactions.splice($scope.transactions.indexOf(trans), 1);
+    
+  }
+
 
   /* Add stuff */
 

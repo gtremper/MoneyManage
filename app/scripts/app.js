@@ -8,15 +8,11 @@ app.config(['$routeProvider', function ($routeProvider) {
       templateUrl: 'views/main.html',
       controller: 'MainCtrl'
     })
-    .when('/view/', {
-      templateUrl: 'views/viewTransaction.html',
-      controller: 'ViewTransCtrl'
-    })
-    .when('/add/', {
-      templateUrl: 'views/addTransaction.html',
-      controller: 'AddTransCtrl'
+    .when('/signin',{
+      templateUrl: 'views/signin.html',
+      controller: 'SigninCtrl'
     })
     .otherwise({
-      redirectTo: '/'
+      redirectTo: '/signin'
     });
 }]);

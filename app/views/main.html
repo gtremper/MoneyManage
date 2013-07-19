@@ -19,10 +19,10 @@
                 <span class="money_bullet">{{item.amount|currency}}</span> <a ng-click="viewTrans(item)">{{item.title}}<span ng-hide="item.title">Untitled<span></a>
               </li>
             </ul>
-            <div ng-hide="getItems(person).length">
+            <div ng-hide="getItems(person).length" style="margin-bottom:10px;">
               No transactions
             </div>
-            <button class="btn" ng-click="changeTab('add','view-right');setCurrentUser(person)">Add</button>
+            <button class="btn btn-primary" ng-click="changeTab('add','view-right');setCurrentUser(person)">Add</button>
           </td>
         </tr>
       </tbody>
@@ -31,7 +31,7 @@
   <div ng-switch-when="add" class="addTransaction tab-pane">
 
     <h1>Add Transaction</h1>
-    <form class="form-horizontal" ng-submit="addItem(currentUser)">
+    <form class="form-horizontal" ng-submit="addItem(currentUser)" style="margin-top:20px;">
       <div class="control-group">
         <label class="control-label" for="title">Title:</label>
         <div class="controls">
@@ -70,26 +70,39 @@
   </div>
   <div ng-switch-when="view" class="tab-pane">
 
-    <h1>{{currentTrans.title}}<span ng-hide="currentTrans.title">Untitled<span> <small>on {{currentTrans.date | date:'mediumDate'}}</small></h1>
-    <p>{{currentTrans.description}}<span ng-hide="currentTrans.description">No description.</span></p>
-    <h3>{{currentTrans.amount | currency}} <small>split between...</small></h3>
-    <ul>
-      <li ng-repeat="person in currentTrans.split">
-        {{person}}
-      </li>
-    </ul>
-
-    <div class="well">
-      <input type="text" ng-model="currentTrans.title"> <br>
-      <textarea ng-model="currentTrans.description"></textarea> <br>
-      <input type="number" ng-model="currentTrans.amount" min="0" step="0.01">
-      <label class="checkbox">
-        <input type="checkbox" ng-click="editSplit(currentTrans.owner,currentTrans.split)" ng-checked="currentTrans.split.indexOf(currentTrans.owner)>=0"> Me
-      </label>
-      <label class="checkbox" ng-repeat="owner in allOwnersExcept(currentUser)">
-        <input type="checkbox" ng-click="editSplit(owner.name,currentTrans.split)" ng-checked="currentTrans.split.indexOf(owner.name)>=0"> {{owner.name}}
-      </label>
+    <div class="pull-right" ng-init="edit=false">
+      <div>
+        <button class="btn" ng-hide="edit" ng-click="edit=true">Edit</button>
+      </div>
+      <div class="well" ng-show="edit">
+        <form>
+          <input type="text" ng-model="currentTrans.title" placeholder="Title"> <br>
+          <textarea ng-model="currentTrans.description" placeholder="Description"></textarea> <br>
+          <input type="number" ng-model="currentTrans.amount" min="0" step="0.01" placeholder="0.00">
+          <label class="checkbox">
+            <input type="checkbox" ng-click="editSplit(currentTrans.owner,currentTrans.split)" ng-checked="currentTrans.split.indexOf(currentTrans.owner)>=0"> Me
+          </label>
+          <label class="checkbox" ng-repeat="owner in allOwnersExcept(currentUser)">
+            <input type="checkbox" ng-click="editSplit(owner.name,currentTrans.split)" ng-checked="currentTrans.split.indexOf(owner.name)>=0"> {{owner.name}}
+          </label>
+        </form>
+        <div>
+          <button class="btn btn-primary" ng-click="edit=false">Save</button>
+          <button class="btn btn-danger pull-right" ng-click="deleteTransaction(currentTrans);changeTab('home','view-right')">Delete</button>
+        </div>
+      </div>
     </div>
+    <div>
+      <h1>{{currentTrans.title}}<span ng-hide="currentTrans.title">Untitled</span> <small>on {{currentTrans.date | date:'mediumDate'}}</small></h1>
+      <p>{{currentTrans.description}}<span ng-hide="currentTrans.description">No description.</span></p>
+      <h3>{{currentTrans.amount | currency}} <small>split between...</small></h3>
+      <ul>
+        <li ng-repeat="person in currentTrans.split">
+          {{person}}
+        </li>
+      </ul>
+    </div>
+
 
     <button class="btn" ng-click="changeTab('','view-right')">Back</button>
 
