@@ -14,6 +14,7 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
   $scope.transactions = [];
   $scope.owners = [{name:'Graham'},{name:'Max'},{name:'Oli'}];
   $scope.ownerNames = _.map($scope.owners,function(own){return own.name;});
+  $scope.tableName = "Table 1"
 
   $scope.tab = '';
   $scope.anim_dir = '';
@@ -87,7 +88,7 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
 
   $scope.deleteTransaction = function(trans){
     $scope.transactions.splice($scope.transactions.indexOf(trans), 1);
-    
+
   }
 
 
