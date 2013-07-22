@@ -3,12 +3,12 @@
   <div class="hero-unit">
     <h3 ng-hide="signin">Register <span class="signin-toggle"> or <a ng-click="signin=true">sign in</a></span></h3>
     <h3 ng-show="signin">Sign in <span class="signin-toggle"> or <a ng-click="signin=false">register</a></span></h3>
-    <form>
+    <form ng-submit="login()" name="loginForm">
       <div>
-        <input type="email" placeholder="email">
+        <input type="email" placeholder="email" name="username">
       </div>
       <div>
-        <input type="password" placeholder="password">
+        <input type="password" placeholder="password" name="password">
       </div>
       <button type="submit" class="btn btn-primary" ng-hide="signin">Register</button>
       <button type="submit" class="btn btn-primary" ng-show="signin">Sign in</button>

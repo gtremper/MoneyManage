@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Auth',['$rootScope','$http','$cookieStore','userRoles','accessLevels',function ($http,$cookieStore,userRoles) {
+app.factory('Auth',['$rootScope','$http','$cookieStore','userRoles','accessLevels',function ($rootScope,$http,$cookieStore,userRoles,accessLevels) {
 
   $rootScope.user = $cookieStore.get('user') || {username: '', role: userRoles.public};
   $cookieStore.remove('user')
@@ -9,24 +9,30 @@ app.factory('Auth',['$rootScope','$http','$cookieStore','userRoles','accessLevel
   $rootScope.userRoles = userRoles;
 
   return {
-    authorize: function (accessLevel) {
+    authorize: function (accessLevel, role) {
+      if (role===undefined){
+        role = $rootScope.user.role;
+      }
       return accessLevel & role;
     },
-    isLoggedIn: function() {
+    isLoggedIn: function(user) {
+      if (role===undefined){
+        role = $rootScope.user;
+      }
       return user.role===userRoles.user || user.role===userRoles.admin;
     },
-    register: function(user_data, success, error) {
-      $http.post('/api/register', user_data).success(success).error(success);
+    register: function(user, success, error) {
+      $http.post('/api/register', user).success(success).error(success);
     },
     login: function(user_data, success, error) {
-      $http.post('/api/login', user_data).success(function(){
-        user = user_data;
-        success();
+      $http.post('/api/login', user).success(function(user){
+        $rootScope.user = user;
+        success(user);
       }).error(error);
     },
     logout: function(success,error) {
       $http.post('/api/logout').success(function(){
-        user = {
+        $rootScope.user = {
           username :'',
           role : userRoles.public
         };
