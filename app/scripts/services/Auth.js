@@ -1,11 +1,12 @@
 'use strict';
 
-app.factory('Auth',['$http','$cookieStore','userRoles',function ($http,$cookieStore,userRoles) {
+app.factory('Auth',['$rootScope','$http','$cookieStore','userRoles','accessLevels',function ($http,$cookieStore,userRoles) {
 
-  var user = {
-    username : $cookieStore.username===undefined ? '' : $cookieStore.username;
-    role : $cookieStore.role===undefined ? userRoles.public : $cookieStore.role;
-  }
+  $rootScope.user = $cookieStore.get('user') || {username: '', role: userRoles.public};
+  $cookieStore.remove('user')
+
+  $rootScope.accessLevels = accessLevels;
+  $rootScope.userRoles = userRoles;
 
   return {
     authorize: function (accessLevel) {
@@ -26,11 +27,13 @@ app.factory('Auth',['$http','$cookieStore','userRoles',function ($http,$cookieSt
     logout: function(success,error) {
       $http.post('/api/logout').success(function(){
         user = {
-          username = '',
-          role = userRoles.public
+          username :'',
+          role : userRoles.public
         };
         success();
       }).error(error);
-    }
+    },
+    accessLevels: accessLevels,
+    userRoles: userRoles
   };
 }]);
