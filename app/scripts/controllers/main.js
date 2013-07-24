@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MainCtrl', ['$scope','Auth', function ($scope,Auth) {
+app.controller('MainCtrl', ['$rootScope','$cookieStore','$scope','Auth', function ($rootScope,$cookieStore,$scope,Auth) {
   /* Hardcoded values for test */
   function transaction(owner,split,title,description,amount){
     this.owner = owner;
@@ -129,6 +129,11 @@ app.controller('MainCtrl', ['$scope','Auth', function ($scope,Auth) {
 
   $scope.logout = function(){
     Auth.logout();
+  }
+
+  $scope.print = function(){
+    console.log($rootScope.user);
+    console.log($cookieStore.get('user'));
   }
 
 }]);

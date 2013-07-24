@@ -16,8 +16,8 @@ app.factory('Auth',['$rootScope','$http','$cookieStore','$location','userRoles',
       return accessLevel & role;
     },
     isLoggedIn: function(user) {
-      if (role===undefined){
-        role = $rootScope.user;
+      if (user===undefined){
+        user = $rootScope.user;
       }
       return user.role===userRoles.user || user.role===userRoles.admin;
     },
