@@ -22,10 +22,11 @@ module.exports = {
     },
 
     login: function(req, res, next) {
+        console.log("login");
         passport.authenticate('local', function(err, user) {
 
             if(err)     { return next(err); }
-            if(!user)   { return res.send(400); }
+            if(!user)   { console.log('no user');return res.send(400); }
 
 
             req.logIn(user, function(err) {

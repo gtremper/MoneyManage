@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MainCtrl', ['$scope', function ($scope) {
+app.controller('MainCtrl', ['$scope','Auth', function ($scope,Auth) {
   /* Hardcoded values for test */
   function transaction(owner,split,title,description,amount){
     this.owner = owner;
@@ -123,5 +123,12 @@ app.controller('MainCtrl', ['$scope', function ($scope) {
     }
     console.log($scope.checkedNames)
   };
+
+
+  /*****  Auth ******/
+
+  $scope.logout = function(){
+    Auth.logout();
+  }
 
 }]);

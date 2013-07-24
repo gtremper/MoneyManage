@@ -84,19 +84,19 @@ var routes = [
 
     // Local Auth
     {
-        path: '/auth/register',
+        path: '/register',
         httpMethod: 'POST',
         middleware: [AuthCtrl.register],
         accessLevel: accessLevels.public
     },
     {
-        path: '/auth/login',
+        path: '/login',
         httpMethod: 'POST',
         middleware: [AuthCtrl.login],
         accessLevel: accessLevels.public
     },
     {
-        path: '/auth/logout',
+        path: '/logout',
         httpMethod: 'POST',
         middleware: [AuthCtrl.logout],
         accessLevel: accessLevels.public
@@ -104,7 +104,7 @@ var routes = [
 
     // User resource
     {
-        path: '/auth/users',
+        path: '/users',
         httpMethod: 'GET',
         middleware: [ensureAuthenticated, ensureAuthorized, UserCtrl.index],
         accessLevel: accessLevels.admin
@@ -124,7 +124,7 @@ var routes = [
                 'username': username,
                 'role': role
             }));
-            res.render('index');
+            res.sendfile('/Users/gtremper/Projects/MoneyManage/app/index.html');
         }],
         accessLevel: accessLevels.public
     }

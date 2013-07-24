@@ -1,5 +1,3 @@
-'use strict';
-
 var express =       require('express')
     , http =        require('http')
     , passport =    require('passport')
@@ -8,7 +6,7 @@ var express =       require('express')
 
 var app = express();
 
-app.set('views', __dirname + '/app/views');
+app.set('views', __dirname + '/app');
 app.set('view engine', 'html');
 app.use(express.logger('dev'))
 app.use(express.cookieParser());
@@ -33,9 +31,7 @@ passport.deserializeUser(User.deserializeUser);
 
 require('./server/routes.js')(app);
 
-/* The real server
 app.set('port', process.env.PORT || 8000);
 http.createServer(app).listen(app.get('port'), function(){
     console.log("Express server listening on port " + app.get('port'));
 });
-*/
