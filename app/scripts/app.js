@@ -54,8 +54,10 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
       return promise.then(success,error);
     };
   }]);
+
 }]);
 
+/*
 app.run(['$rootScope','$location','Auth',function($rootScope,$location,Auth){
   $rootScope.$on('$routeChangeStart', function(event, next, current){
     if (!Auth.authorize(next.access)){
@@ -63,5 +65,6 @@ app.run(['$rootScope','$location','Auth',function($rootScope,$location,Auth){
     }
   });
 }]);
+*/
 
 
