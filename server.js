@@ -17,6 +17,7 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'app')));
+app.use(express.static(path.join(__dirname, '.tmp'))); // only for development
 app.use(express.cookieParser());
 app.use(express.session({secret: 'keyboard cat'}));
 app.use(passport.initialize());
@@ -25,8 +26,8 @@ app.use(app.router);
 
 /** Passport configuration **/
 var users = [
-    { id: 1, username: 'bob', password: 'secret', email: 'bob@example.com' }
-  , { id: 2, username: 'joe', password: 'birthday', email: 'joe@example.com' }
+    { id: 1, username: 'bob', password: 'secret', email: 'bob@example.com', role: userRoles.user}
+  , { id: 2, username: 'joe', password: 'birthday', email: 'joe@example.com', role: userRoles.admin }
 ];
 
 function findById(id, fn) {
@@ -105,35 +106,39 @@ passport.use(new LocalStrategy(
 //   which, in this example, will redirect the user to the home page.
 //
 //   curl -v -d "username=bob&password=secret" http://127.0.0.1:3000/login
+/*
 app.post('/login', 
   passport.authenticate('local'),
   function(req, res) {
     console.log("login");
-    res.json({username: 'Bob', role: userRoles.user});
+    res.json(200, {username: 'Bob', role: userRoles.user});
   });
-  
+*/  
 // POST /login
 //   This is an alternative implementation that uses a custom callback to
 //   acheive the same functionality.
-/*
+
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
-    if (err) { return next(err) }
-    if (!user) {
-      req.flash('error', info.message);
-      return res.redirect('/login')
-    }
-    req.logIn(user, function(err) {
-      if (err) { return next(err); }
-      return res.redirect('/users/' + user.username);
+    if(err){return next(err);}
+    if (!user){return res.send(400);}
+
+    req.login(user, function(err){
+      if(err){return next(err);}
+
+      console.log(user);
+      console.log(req.body);
+      if(req.body.rememberme){
+        req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;
+      }
+      res.json(200, {'role': user.role, 'username':user.username});
     });
+
   })(req, res, next);
 });
-*/
+
 
 app.post('/logout', function(req, res){
-  console.log("logout");
-  console.log(req.user)
   req.logout();
   res.send(200);
 });

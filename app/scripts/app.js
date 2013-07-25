@@ -36,7 +36,7 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
       redirectTo: '/signin'
     });
 
-  //$locationProvider.html5Mode(true);
+  $locationProvider.html5Mode(true);
 
   $httpProvider.responseInterceptors.push(['$location','$q',function($location,$q){
     function success(response){

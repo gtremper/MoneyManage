@@ -5,7 +5,8 @@ app.controller('SigninCtrl', ['$rootScope','$scope','$location','$window','Auth'
   $scope.login = function(){
     Auth.login({
       username: $scope.username,
-      password: $scope.password
+      password: $scope.password,
+      rememberme: $scope.rememberme
     },
     function(res){
       $location.path('/');
