@@ -2,7 +2,7 @@
 
 app.factory('Auth',['$rootScope','$http','$cookieStore','$location','userRoles','accessLevels',function ($rootScope,$http,$cookieStore,$location,userRoles,accessLevels) {
 
-  $rootScope.user = $cookieStore.get('user') || {username: '', role: userRoles.public};
+  $rootScope.user = $cookieStore.get('user') || {email: '', role: userRoles.public};
   $cookieStore.remove('user');
 
   $rootScope.accessLevels = accessLevels;
@@ -33,7 +33,7 @@ app.factory('Auth',['$rootScope','$http','$cookieStore','$location','userRoles',
     logout: function(success,error) {
       $http.post('/logout').success(function(){
         $rootScope.user = {
-          username :'',
+          email :'',
           role : userRoles.public
         };
         if (success===undefined){

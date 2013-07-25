@@ -131,14 +131,15 @@ app.controller('MainCtrl', ['$rootScope','$cookieStore','$scope','$http','Auth',
     Auth.logout();
   }
 
-  $scope.print = function(){
-    console.log('print');
+  $scope.test = function(){
     $http.get('/api/test').success(function(data){
-      console.log('success');
       console.log(data);
-    }).error(function(err){
-      console.log('error');
-      console.log(err)
+    });
+  }
+
+  $scope.admin = function(){
+    $http.get('/api/testadmin').success(function(data){
+      console.log(data);
     });
   }
 

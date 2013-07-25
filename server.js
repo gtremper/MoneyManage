@@ -5,7 +5,8 @@ var express = require('express'),
     path = require('path'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
-    userRoles = require('./server/routingConfig').userRoles;
+    userRoles = require('./server/routingConfig').userRoles,
+    userLevels = require('./server/routingConfig').userLevels;
 
 var app = module.exports = express();
 
@@ -26,8 +27,8 @@ app.use(app.router);
 
 /** Passport configuration **/
 var users = [
-    { id: 1, username: 'bob', password: 'secret', email: 'bob@example.com', role: userRoles.user}
-  , { id: 2, username: 'joe', password: 'birthday', email: 'joe@example.com', role: userRoles.admin }
+    { id: 1, password: '123', email: 'user', role: userRoles.user}
+  , { id: 2, password: '123', email: 'admin', role: userRoles.admin }
 ];
 
 function findById(id, fn) {
@@ -39,24 +40,14 @@ function findById(id, fn) {
   }
 }
 
-function findByUsername(username, fn) {
+function findByEmail(email, fn) {
   for (var i = 0, len = users.length; i < len; i++) {
     var user = users[i];
-    if (user.username === username) {
+    if (user.email === email) {
       return fn(null, user);
     }
   }
   return fn(null, null);
-}
-
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed.  Otherwise, the user will be redirected to the
-//   login page.
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.send(401, 'Not Authenticated');
 }
 
 // Passport session setup.
@@ -76,21 +67,24 @@ passport.deserializeUser(function(id, done) {
 
 // Use the LocalStrategy within Passport.
 //   Strategies in passport require a `verify` function, which accept
-//   credentials (in this case, a username and password), and invoke a callback
+//   credentials (in this case, a email and password), and invoke a callback
 //   with a user object.  In the real world, this would query a database;
 //   however, in this example we are using a baked-in set of users.
-passport.use(new LocalStrategy(
-  function(username, password, done) {
+passport.use(new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password'
+  },
+  function(email, password, done) {
     // asynchronous verification, for effect...
     process.nextTick(function () {
       
-      // Find the user by username.  If there is no user with the given
-      // username, or the password is not correct, set the user to `false` to
+      // Find the user by email.  If there is no user with the given
+      // email, or the password is not correct, set the user to `false` to
       // indicate failure and set a flash message.  Otherwise, return the
       // authenticated `user`.
-      findByUsername(username, function(err, user) {
+      findByEmail(email, function(err, user) {
         if (err) { return done(err); }
-        if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
+        if (!user) { return done(null, false, { message: 'Unknown user ' + email }); }
         if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
         return done(null, user);
       })
@@ -105,13 +99,13 @@ passport.use(new LocalStrategy(
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 //
-//   curl -v -d "username=bob&password=secret" http://127.0.0.1:3000/login
+//   curl -v -d "email=bob&password=secret" http://127.0.0.1:3000/login
 /*
 app.post('/login', 
   passport.authenticate('local'),
   function(req, res) {
     console.log("login");
-    res.json(200, {username: 'Bob', role: userRoles.user});
+    res.json(200, {email: 'Bob', role: userRoles.user});
   });
 */  
 // POST /login
@@ -129,14 +123,15 @@ app.post('/login', function(req, res, next) {
       console.log(user);
       console.log(req.body);
       if(req.body.rememberme){
-        req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;
+        req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;//one week
+      } else {
+        req.session.cookie.maxAge = 1000 * 60 * 60;//one hour
       }
-      res.json(200, {'role': user.role, 'username':user.username});
+      res.json(200, {'role': user.role, 'email':user.email});
     });
 
   })(req, res, next);
 });
-
 
 app.post('/logout', function(req, res){
   req.logout();
@@ -144,14 +139,14 @@ app.post('/logout', function(req, res){
 });
 
 /** Routes **/
-app.get('/', routes.index);
+app.get('/',routes.index);
 app.get('/views/:name',routes.views);
 
 /** JSON API **/
-app.get('/api/test', api.test)
+require('./server/api')(app);
 
-/** Redirect all others to index **/
-app.get('*', routes.index);
+/** Catch all other routes for angular routing **/
+app.get('*',routes.index);
 
 /** Start server **/
 http.createServer(app).listen(app.get('port'), function () {

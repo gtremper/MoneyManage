@@ -13,4 +13,4 @@
         user:   userRoles.user | userRoles.admin,                    // 110
         admin:  userRoles.admin                                      // 100
     };
-})(typeof exports === 'undefined'? this['routingConfig']={}: exports);
+})(exports);
