@@ -19,9 +19,12 @@ app.factory('Table', ['$http','$rootScope',function ($http,$rootScope) {
 
   function table(name){
     this.name;
-
+    this.transactions;
+    this.members;
     this.id;
   }
+
+  var myTables = []
 
   var currentTable = null;
 
@@ -32,9 +35,11 @@ app.factory('Table', ['$http','$rootScope',function ($http,$rootScope) {
     addTransaction: function (trans){
 
     },
-    addMember: function(email){
+    editTransaction: function(trans){
 
     },
+    addMember: function(email){
 
+    }
   };
 }]);

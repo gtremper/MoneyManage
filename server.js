@@ -1,66 +1,46 @@
 var express = require('express'),
-    http = require('http'),
     routes = require('./server/routes'),
     api = require('./server/api'),
     path = require('path'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
     userRoles = require('./server/routingConfig').userRoles,
-    userLevels = require('./server/routingConfig').userLevels;
+    userLevels = require('./server/routingConfig').userLevels,
+    mongoose = require('mongoose'),
+    Users = require('./server/models').Users;
 
 var app = module.exports = express();
 
+
 // all environments
-app.set('port', process.env.PORT || 8000);
-app.set('views', __dirname + '/app');
-app.set('view engine', 'html');
-app.use(express.logger('dev'));
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(express.static(path.join(__dirname, 'app')));
-app.use(express.static(path.join(__dirname, '.tmp'))); // only for development
-app.use(express.cookieParser());
-app.use(express.session({secret: 'keyboard cat'}));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(app.router);
+app.configure(function(){
+  app.set('port', process.env.PORT || 8000);
+  app.set('views', __dirname + '/app');
+  app.set('view engine', 'html');
+  app.use(express.logger('dev'));
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.static(path.join(__dirname, 'app')));
+  app.use(express.static(path.join(__dirname, '.tmp'))); // only for development
+  app.use(express.cookieParser());
+  app.use(express.session({secret: 'keyboard cat'}));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(app.router);
+})
 
 /** Passport configuration **/
-var users = [
-    { id: 1, password: '123', email: 'user', role: userRoles.user}
-  , { id: 2, password: '123', email: 'admin', role: userRoles.admin }
-];
 
-function findById(id, fn) {
-  var idx = id - 1;
-  if (users[idx]) {
-    fn(null, users[idx]);
-  } else {
-    fn(new Error('User ' + id + ' does not exist'));
-  }
-}
-
-function findByEmail(email, fn) {
-  for (var i = 0, len = users.length; i < len; i++) {
-    var user = users[i];
-    if (user.email === email) {
-      return fn(null, user);
-    }
-  }
-  return fn(null, null);
-}
-
-// Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,
 //   this will be as simple as storing the user ID when serializing, and finding
 //   the user by ID when deserializing.
 passport.serializeUser(function(user, done) {
-  done(null, user.id);
+  done(null, user._id);
 });
 
 passport.deserializeUser(function(id, done) {
-  findById(id, function (err, user) {
+  Users.findOne({_id:id}, function (err, user) {
     done(err, user);
   });
 });
@@ -82,10 +62,13 @@ passport.use(new LocalStrategy({
       // email, or the password is not correct, set the user to `false` to
       // indicate failure and set a flash message.  Otherwise, return the
       // authenticated `user`.
-      findByEmail(email, function(err, user) {
+      Users.findOne({'email':email}, function(err, user) {
         if (err) { return done(err); }
         if (!user) { return done(null, false, { message: 'Unknown user ' + email }); }
-        if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
+
+        if (user.password != password){ 
+          return done(null, false, { message: 'Invalid password' });
+        }
         return done(null, user);
       })
     });
@@ -120,17 +103,30 @@ app.post('/login', function(req, res, next) {
     req.login(user, function(err){
       if(err){return next(err);}
 
-      console.log(user);
-      console.log(req.body);
       if(req.body.rememberme){
         req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;//one week
       } else {
         req.session.cookie.maxAge = 1000 * 60 * 60;//one hour
       }
-      res.json(200, {'role': user.role, 'email':user.email});
+      res.json(200, {'role': user.role, 'email':user.email, 'name':user.name});
     });
 
   })(req, res, next);
+});
+
+app.post('/register', function(req,res){
+  var b = req.body;
+  console.log('register');
+  console.log(b);
+  new Users({
+    name: b.name,
+    email: b.email,
+    password: b.password,
+    role: userRoles.user
+  }).save(function(err,user){
+    if (err) res.json(err);
+    res.send(200);
+  });
 });
 
 app.post('/logout', function(req, res){
@@ -149,6 +145,6 @@ require('./server/api')(app);
 app.get('*',routes.index);
 
 /** Start server **/
-http.createServer(app).listen(app.get('port'), function () {
+app.listen(app.get('port'),function(){
   console.log('Express server listening on port ' + app.get('port'));
 });

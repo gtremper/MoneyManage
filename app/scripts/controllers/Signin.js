@@ -15,7 +15,9 @@ app.controller('SigninCtrl', ['$rootScope','$scope','$location','$window','Auth'
       $location.error = "Failed to login"
     });
   };
+  /*
   $scope.loginOauth = function(provider) {
     $window.location.href = '/auth/' + provider;
   };
+  */
 }]);

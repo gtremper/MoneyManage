@@ -32,6 +32,11 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
       controller: 'SigninCtrl',
       access: accessLevels.public
     })
+    .when('/register',{
+      templateUrl: 'views/register.html',
+      controller: 'RegisterCtrl',
+      access: accessLevels.public
+    })
     .otherwise({
       redirectTo: '/signin'
     });
