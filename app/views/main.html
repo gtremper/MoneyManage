@@ -1,5 +1,5 @@
 <div ng-include src="'views/navbar.html'"></div>
-<div ng-switch on="tab" ng-animate="anim_dir" class="main" style="height:300px;">
+<div ng-switch on="tab" ng-animate="anim_dir" class="main">
   <div ng-switch-default class="tab-pane table-tab">
     <h1> Total: {{allTotal() | currency}} <small class="pull-right title">{{tableName}}</small> </h1>
     <table class="table table-bordered">
@@ -106,11 +106,7 @@
     <button class="btn" ng-click="changeTab('','view-right')">Back</button>
   </div>
 </div>
-<div>
-  <button class="btn" ng-click="logout()">Logout</button>
-  <button class="btn" ng-click="test()">Test</button>
-  <button class="btn" ng-click="admin()">Test Admin</button>
-</div>
+
 
 
 

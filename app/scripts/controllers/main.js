@@ -124,23 +124,4 @@ app.controller('MainCtrl', ['$rootScope','$cookieStore','$scope','$http','Auth',
     console.log($scope.checkedNames)
   };
 
-
-  /*****  Auth ******/
-
-  $scope.logout = function(){
-    Auth.logout();
-  }
-
-  $scope.test = function(){
-    $http.get('/api/test').success(function(data){
-      console.log(data);
-    });
-  }
-
-  $scope.admin = function(){
-    $http.get('/api/testadmin').success(function(data){
-      console.log(data);
-    });
-  }
-
 }]);
