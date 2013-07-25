@@ -8,7 +8,12 @@ exports.index = function(req,res){
     role = req.user.role;
     username = req.user.username;
   }
-  console.log("INDEXXXXX\n\n\n\n");
+  res.cookie('user', JSON.stringify({
+    'username' : username,
+    'role' : role
+  }));
+
+
   console.log('username');
   console.log(username);
   console.log('role');
