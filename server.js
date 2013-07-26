@@ -97,8 +97,8 @@ app.post('/login',
 
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
-    if(err){return next(err);}
-    if (!user){return res.send(400);}
+    if(err) return next(err);
+    if (!user) return res.send(400,{'error':'bad username'});
 
     req.login(user, function(err){
       if(err){return next(err);}
@@ -116,15 +116,18 @@ app.post('/login', function(req, res, next) {
 
 app.post('/register', function(req,res){
   var b = req.body;
+  if (Users.findOne({'email':b.email})){
+    return res.send(400,{'error':'use already exists'});
+  }
   new Users({
     name: b.name,
     email: b.email,
     password: b.password,
     role: userRoles.user
   }).save(function(err,user){
-    if (err) res.json(err);
+    if (err) return res.json(err);
     req.login(user,function(err){
-      if (err) res.json(err);
+      if (err) return res.json(err);
       console.log(user);
       res.json(200, {'role': user.role, 'email':user.email, 'name':user.name});
     });

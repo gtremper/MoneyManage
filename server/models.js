@@ -1,9 +1,10 @@
 var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
     userRoles = require('./routingConfig').userRoles;
 
 mongoose.connect('mongodb://localhost/test');
 
-var UserSchema = new mongoose.Schema({
+var UserSchema = new Schema({
   name: String,
   email: String,
   password: String,
@@ -12,27 +13,21 @@ var UserSchema = new mongoose.Schema({
 
 exports.Users = mongoose.model('Users',UserSchema);
 
-/** Passport configuration **/
-var users = [
-    { id: 1, password: '123', email: 'user', role: userRoles.user}
-  , { id: 2, password: '123', email: 'admin', role: userRoles.admin }
-];
+var TransactionSchema = new Schema({
+  owner: {type: Schema.Types.ObjectId, ref: 'User'},
+  split: [{type: Schema.Types.ObjectId, ref: 'User'}],
+  title: String,
+  description: String,
+  amount: Number
+});
 
-function findById(id, fn) {
-  var idx = id - 1;
-  if (users[idx]) {
-    fn(null, users[idx]);
-  } else {
-    fn(new Error('User ' + id + ' does not exist'));
-  }
-}
+exports.Transaction = mongoose.model('Transaction',TransactionSchema);
 
-function findByEmail(email, fn) {
-  for (var i = 0, len = users.length; i < len; i++) {
-    var user = users[i];
-    if (user.email === email) {
-      return fn(null, user);
-    }
-  }
-  return fn(null, null);
-}
+var TableSchema = new Schema({
+  name: String,
+  members: [{type: Schema.Types.ObjectId, ref: 'User'}],
+  transactions: [TransactionSchema],
+  prevTables: [TableSchema]
+});
+
+exports.Table = mongoose.model('Table',TableSchema);
