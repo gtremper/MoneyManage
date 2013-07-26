@@ -9,6 +9,7 @@ app.controller('RegisterCtrl', ['$scope','$location','Auth',function ($scope,$lo
       name: $scope.name
     },
     function(res){
+      console.log("REDIRECT");
       $location.path('/');
     },
     function(err){

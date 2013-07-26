@@ -65,6 +65,9 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
 
 app.run(['$rootScope','$location','Auth',function($rootScope,$location,Auth){
   $rootScope.$on('$routeChangeStart', function(event, next, current){
+    console.log("routechange");
+    console.log(next.access);
+    console.log($rootScope.user);
     if (!Auth.authorize(next.access)){
       $location.path('/signin');
     }

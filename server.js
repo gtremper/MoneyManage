@@ -116,8 +116,6 @@ app.post('/login', function(req, res, next) {
 
 app.post('/register', function(req,res){
   var b = req.body;
-  console.log('register');
-  console.log(b);
   new Users({
     name: b.name,
     email: b.email,
@@ -125,7 +123,11 @@ app.post('/register', function(req,res){
     role: userRoles.user
   }).save(function(err,user){
     if (err) res.json(err);
-    res.send(200);
+    req.login(user,function(err){
+      if (err) res.json(err);
+      console.log(user);
+      res.json(200, {'role': user.role, 'email':user.email, 'name':user.name});
+    });
   });
 });
 

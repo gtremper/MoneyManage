@@ -22,7 +22,11 @@ app.factory('Auth',['$rootScope','$http','$cookieStore','$location','userRoles',
       return user.role===userRoles.user || user.role===userRoles.admin;
     },
     register: function(user, success, error) {
-      $http.post('/register', user).success(success).error(success);
+      $http.post('/register', user).success(function(user){
+        console.log(user);
+        $rootScope.user = user;
+        success(user);
+      }).error(success);
     },
     login: function(user, success, error) {
       $http.post('/login', user).success(function(user){
