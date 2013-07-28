@@ -11,8 +11,9 @@ app.controller('SigninCtrl', ['$rootScope','$scope','$location','$window','Auth'
     function(res){
       $location.path('/');
     },
-    function(err){
-      $location.error = "Failed to login"
+    function(data,status){
+      console.log(data);
+      console.log(status);
     });
   };
   /*

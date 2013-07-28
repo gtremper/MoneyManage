@@ -26,7 +26,7 @@ app.factory('Auth',['$rootScope','$http','$cookieStore','$location','userRoles',
         console.log(user);
         $rootScope.user = user;
         success(user);
-      }).error(success);
+      }).error(error);
     },
     login: function(user, success, error) {
       $http.post('/login', user).success(function(user){

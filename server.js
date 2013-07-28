@@ -15,8 +15,7 @@ var app = module.exports = express();
 // all environments
 app.configure(function(){
   app.set('port', process.env.PORT || 8000);
-  app.set('views', __dirname + '/app');
-  app.set('view engine', 'html');
+  app.use(express.compress());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
@@ -64,10 +63,10 @@ passport.use(new LocalStrategy({
       // authenticated `user`.
       Users.findOne({'email':email}, function(err, user) {
         if (err) { return done(err); }
-        if (!user) { return done(null, false, { message: 'Unknown user ' + email }); }
+        if (!user) { return done(null, false, { error: 'user doesnt exist'}); }
 
         if (user.password != password){ 
-          return done(null, false, { message: 'Invalid password' });
+          return done(null, false, { error: 'invalid password' });
         }
         return done(null, user);
       })
@@ -97,11 +96,11 @@ app.post('/login',
 
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
-    if(err) return next(err);
-    if (!user) return res.send(400,{'error':'bad username'});
+    if(err) return res.send(500,{error:'database error'});
+    if (!user) return res.send(400,info);
 
     req.login(user, function(err){
-      if(err){return next(err);}
+      if(err) return res.send(500,{error:'authentication error'});
 
       if(req.body.rememberme){
         req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;//one week
@@ -116,22 +115,25 @@ app.post('/login', function(req, res, next) {
 
 app.post('/register', function(req,res){
   var b = req.body;
-  if (Users.findOne({'email':b.email})){
-    return res.send(400,{'error':'use already exists'});
-  }
-  new Users({
-    name: b.name,
-    email: b.email,
-    password: b.password,
-    role: userRoles.user
-  }).save(function(err,user){
-    if (err) return res.json(err);
-    req.login(user,function(err){
-      if (err) return res.json(err);
-      console.log(user);
-      res.json(200, {'role': user.role, 'email':user.email, 'name':user.name});
+  Users.findOne({'email':b.email}, function(err, user){
+    if (err) res.send(500,{error:'database error'});
+    if(user){
+      return res.send(400,{error:"user already exists"});
+    }
+    new Users({
+      name: b.name,
+      email: b.email,
+      password: b.password,
+      role: userRoles.user,
+      tables: []
+    }).save(function(err,user){
+      if (err) return res.send(500,{error:'database error'});
+      req.login(user,function(err){
+        if (err) return res.send(500,{error:'authentication error'});
+        res.json(200, {'role': user.role, 'email':user.email, 'name':user.name});
+      });
     });
-  });
+  })
 });
 
 app.post('/logout', function(req, res){

@@ -11,9 +11,10 @@ app.controller('RegisterCtrl', ['$scope','$location','Auth',function ($scope,$lo
     function(res){
       $location.path('/');
     },
-    function(err){
+    function(data,status,headers,config){
       console.log("error");
-      console.log(err);
+      console.log(data);
+      console.log(status);
     });
   };
 }]);
