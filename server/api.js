@@ -7,6 +7,7 @@ var userRoles = require('./routingConfig').userRoles,
     Users = require('./models').Users,
     Transactions = require('./models').Transactions,
     Tables = require('./models').Tables,
+    _ = require('underscore'),
     async = require('async');
 
 /** Check authentication level for specific api calls */
@@ -86,6 +87,22 @@ module.exports = function(app){
       .exec(function(err){
         if (err) return res.send(500,err);
       });
+  });
+
+  /* Body needs member_ids */
+  app.get('/api/get_member_names',function(req,res){
+    Users
+      .where('_id').in(req.body.member_ids)
+      .select('name _id')
+      .exec(function(err,names){
+        if (err) return res.send(500,{error:'database error'});
+        _.each(names,function(name,index){
+          if (name._id === req.user._id){
+            names.splice(index,1);
+          }
+        })
+        return res.json(names);
+      })
   });
 
   /* Body needs "table_id" and "transaction" */

@@ -37,6 +37,26 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
       controller: 'RegisterCtrl',
       access: accessLevels.public
     })
+    .when('/home',{
+      templateUrl: 'views/home.html',
+      controller: 'HomeCtrl',
+      access: accessLevels.user
+    })
+    .when('/manage',{
+      templateUrl: 'views/manage_tables.html',
+      controller: 'ManageCtrl',
+      access: accessLevels.user
+    })
+    .when('/new_table',{
+      templateUrl: 'views/new_table.html',
+      controller: 'NewTableCtrl',
+      access: accessLevels.user
+    })
+    .when('/account',{
+      templateUrl: 'views/account.html',
+      controller: 'AccountCtrl',
+      access: accessLevels.user
+    })
     .otherwise({
       redirectTo: '/signin'
     });

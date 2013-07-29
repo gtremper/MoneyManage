@@ -6,27 +6,27 @@ mongoose.connect('mongodb://localhost/test');
 
 /** USER **/
 var UserSchema = new Schema({
-  name: String,
-  email: String,
-  password: String,
-  role: Number,
+  name: {type : String, required : true},
+  email: {type : String, required : true, unique: true},
+  password: {type : String, required : true},
+  role: {type : Number, required : true},
   tables: [{type: Schema.Types.ObjectId, ref: 'Table'}],
   currentTable: {type: Schema.Types.ObjectId, ref: 'Table'}
 });
 
 /** TRANSACTION **/
 var TransactionSchema = new Schema({
-  owner: {type: Schema.Types.ObjectId, ref: 'User'},
-  split: [{type: Schema.Types.ObjectId, ref: 'User'}],
-  title: String,
+  owner: {type: Schema.Types.ObjectId, ref: 'User', required : true},
+  split: [{type: Schema.Types.ObjectId, ref: 'User', required : true}],
+  title: {type : String, required : true},
   description: String,
-  amount: Number,
+  amount: {type : Number, required : true},
   date: { type: Date, default: Date.now }
 });
 
 /** TABLE **/
 var TableSchema = new Schema({
-  title: String,
+  title: {type : String, required : true},
   members: [{type: Schema.Types.ObjectId, ref: 'User'}],
   transactions: [TransactionSchema],
   prevTables: [TableSchema]

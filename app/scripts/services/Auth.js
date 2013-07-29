@@ -23,7 +23,6 @@ app.factory('Auth',['$rootScope','$http','$cookieStore','$location','userRoles',
     },
     register: function(user, success, error) {
       $http.post('/register', user).success(function(user){
-        console.log(user);
         $rootScope.user = user;
         success(user);
       }).error(error);

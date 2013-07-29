@@ -14,6 +14,7 @@
         <!-- build:css({.tmp,app}) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
         <link rel="stylesheet" href="bower_components/angular-ui/build/angular-ui.css"/>
+        <link rel="stylesheet" href="bower_components/select2/select2.css"/>
         <!-- endbuild -->
 </head>
   <body>
@@ -27,6 +28,7 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
+    <div class="container" ng-include src="'views/navbar.html'"></div>
     <div class="container" style="position:relative;" ng-view=""></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
@@ -55,11 +57,14 @@
         <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
         <script src="bower_components/angular-ui/build/angular-ui.js"></script>
         <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
-        <script src="scripts/controllers/addTrans.js"></script>
-        <script src="scripts/controllers/viewTrans.js"></script>
+        <script src="bower_components/select2/select2.js"></script>
         <script src="scripts/controllers/Signin.js"></script>
         <script src="scripts/controllers/Register.js"></script>
+        <script src="scripts/controllers/Home.js"></script>
+        <script src="scripts/controllers/Manage.js"></script>
         <script src="scripts/controllers/Nav.js"></script>
+        <script src="scripts/controllers/NewTable.js"></script>
+        <script src="scripts/controllers/Account.js"></script>
         <script src="scripts/services/Auth.js"></script>
         <script src="scripts/services/Table.js"></script>
         <script src="scripts/directives/accessLevel.js"></script>

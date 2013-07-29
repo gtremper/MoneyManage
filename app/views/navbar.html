@@ -1,14 +1,14 @@
-<div style="height:30px;" ng-controller="NavCtrl">
-  <div class="pull-right">
+<div style="height:30px;position:relative" ng-controller="NavCtrl">
+  <div class="pull-right" accessLevel="accessLevel.user">
     <a class="dropdown-toggle">{{user.email}}</a>
     <ul class="dropdown-menu">
       <li ng-repeat="table in tables">
         <a>{{table.name}}</a>
       </li>
       <li><a ng-href="/new_table">Create New Table</a></li>
-      <li><a ng-click="test()">Test</a></li>
+      <li><a ng-href="/manage">Manage Tables</a></li>
       <li class="divider"></li>
-      <li><a ng-href="/accout_settings">Account settings</a></li>
+      <li><a ng-href="/account">Account settings</a></li>
       <li><a ng-click="logout()">Logout</a></li>
     </ul>
   </div>

@@ -1,12 +1,8 @@
 'use strict';
 
-app.controller('NavCtrl', ['$scope','Auth','$http',function ($scope,Auth,$http) {
+app.controller('NavCtrl', ['$scope','Auth','Table',function ($scope,Auth,Table) {
   $scope.logout = function(){
     Auth.logout();
   }
-  $scope.test = function(){
-    $http.get('/api/test').success(function(data){
-      console.log(data);
-    });
-  }
+  $scope.tables = Table.getTableNames();
 }]);
