@@ -125,7 +125,6 @@ app.post('/register', function(req,res){
       email: b.email,
       password: b.password,
       role: userRoles.user,
-      tables: []
     }).save(function(err,user){
       if (err) return res.send(500,{error:'database error'});
       req.login(user,function(err){

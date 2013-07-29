@@ -7,8 +7,6 @@ app.factory('Table', ['$http','$rootScope',function ($http,$rootScope) {
     this.title = title;
     this.description = description
     this.amount = amount;
-    this.date = new Date();
-    this.id = -1;
   }
 
   function member(name,email){
@@ -24,9 +22,16 @@ app.factory('Table', ['$http','$rootScope',function ($http,$rootScope) {
     this.id;
   }
 
-  var myTables = []
+  var myTables = {};
+  $http.get('/api/get_tables').success(function(data){
+    console.log("Get Tables");
+    console.log(data);
+    for(var i=0, len = data.length; i<len; i++){
+      myTables[data[i]._id] = data[i];
+    }
+  });
 
-  var currentTable = null;
+  var currentTable = myTables[$rootScope.user.currentTable];
 
   return {
     newTable: function (name) {
