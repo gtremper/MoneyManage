@@ -11,13 +11,14 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
 
   var tables = {};
 
+  var promise;
+
   function getTables(callback){
-    $http.get('/api/get_table').success(function(resp){
+    promise = $http.get('/api/get_tables').success(function(data){
       _.each(_.keys(tables), function(table){
         delete tables[table];
       });
-
-      var data = resp.data;
+      console.log(data);
       _.each(data,function(table){
         var new_members = {}
         _.each(table.members, function(member){
@@ -26,6 +27,8 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
         table.members = new_members;
         tables[table._id] = table;
       });
+      console.log("ALL TABLES");
+      console.log(tables);
       typeof callback === 'function' && callback();
     }).error(function(reps){
       console.log("ERROR");
@@ -33,7 +36,6 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
     });
   }
 
-  getTables();
 
   $rootScope.$watch('user',function(user){
     if (!(user.role & accessLevels.user)) return;
@@ -41,6 +43,7 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
     getTables();
   });
 
+  var Table = {};
   Table.newTable = function(name,members){
     $http.post('/api/create_table',{title: name, emails: members})
     .success(function(table){
@@ -55,7 +58,7 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
     });
   };
 
-  Table.getTable = function(id){
+  Table.switchTable = function(id){
     $rootScope.user.currentTable = id;
     $http.post('/api/set_current_table',{table_id: id})
     .success(function(){
@@ -67,6 +70,10 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
     });
     return tables[id];
   };
+
+  Table.getAllTables = function(){
+    return tables;
+  }
 
   Table.addMember = function(email){
     return $http.post('/api/add_member',{'email':email, table_id: $rootScope.user.currentTable})

@@ -2,9 +2,9 @@
 <h2>{{test.value}}</h2>
 <table class="table">
   <tbody>
-    <tr ng-repeat="table in tables">
+    <tr ng-repeat="(id,table) in tables">
       <td>
-        <a ng-href="/home" ng-click="changeTable(table._id)">
+        <a ng-href="/home" ng-click="changeTable(id)">
           {{table.title}}
         </a>
       </td>

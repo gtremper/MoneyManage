@@ -32,6 +32,8 @@ module.exports = function(app){
       .where('_id').in(req.user.tables)
       .populate('members', 'name email _id')
       .exec(function(err,tables){
+        console.log('TABLES');
+        console.log(tables);
         if (err) res.send(500,{error:'database error'});
         return res.json(tables);
       });

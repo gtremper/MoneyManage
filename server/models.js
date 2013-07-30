@@ -16,8 +16,8 @@ var UserSchema = new Schema({
 
 /** TRANSACTION **/
 var TransactionSchema = new Schema({
-  owner: {type: Schema.Types.ObjectId, ref: 'User', required : true},
-  split: [{type: Schema.Types.ObjectId, ref: 'User', required : true}],
+  owner: {type: Schema.Types.ObjectId, ref: 'Users', required : true},
+  split: [{type: Schema.Types.ObjectId, ref: 'Users', required : true}],
   title: {type : String, required : true},
   description: String,
   amount: {type : Number, required : true},
@@ -27,7 +27,7 @@ var TransactionSchema = new Schema({
 /** TABLE **/
 var TableSchema = new Schema({
   title: {type : String, required : true},
-  members: [{type: Schema.Types.ObjectId, ref: 'User'}],
+  members: [{type: Schema.Types.ObjectId, ref: 'Users'}],
   transactions: [TransactionSchema],
   prevTables: [TableSchema]
 });
