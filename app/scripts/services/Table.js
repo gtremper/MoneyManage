@@ -14,11 +14,12 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
   var promise;
 
   function getTables(callback){
-    promise = $http.get('/api/get_tables').success(function(data){
+    $http.get('/api/get_tables').success(function(data){
+      console.log("got tables..");
+      console.log(data);
       _.each(_.keys(tables), function(table){
         delete tables[table];
       });
-      console.log(data);
       _.each(data,function(table){
         var new_members = {}
         _.each(table.members, function(member){
@@ -27,15 +28,12 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
         table.members = new_members;
         tables[table._id] = table;
       });
-      console.log("ALL TABLES");
-      console.log(tables);
       typeof callback === 'function' && callback();
     }).error(function(reps){
       console.log("ERROR");
       console.log(reps);
     });
   }
-
 
   $rootScope.$watch('user',function(user){
     if (!(user.role & accessLevels.user)) return;
@@ -48,8 +46,11 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
     $http.post('/api/create_table',{title: name, emails: members})
     .success(function(table){
       $rootScope.user.currentTable = table._id;
+      $http.post('/api/set_current_table',{table_id: table._id}).success(function(){
+        console.log("set current table")
+      });
       getTables(function(){
-        $location.path('/home');
+        $location.path('/manage');
       });
     })
     .error(function(data){
@@ -75,10 +76,10 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
     return tables;
   }
 
-  Table.addMember = function(email){
-    return $http.post('/api/add_member',{'email':email, table_id: $rootScope.user.currentTable})
+  Table.addMember = function(email,id){
+    return $http.post('/api/add_member',{'email':email, table_id: id})
     .then(function(resp){
-      tables[$rootScope.user.currentTable] = resp.data;
+      tables[id] = resp.data;
     },
     function(resp){
       console.log('ERROR ADDING MEMBER');

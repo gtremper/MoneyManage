@@ -32,8 +32,6 @@ module.exports = function(app){
       .where('_id').in(req.user.tables)
       .populate('members', 'name email _id')
       .exec(function(err,tables){
-        console.log('TABLES');
-        console.log(tables);
         if (err) res.send(500,{error:'database error'});
         return res.json(tables);
       });
@@ -42,14 +40,12 @@ module.exports = function(app){
   /* Body needs "emails" and "title" */
   app.post('/api/create_table',function(req,res){
     var b = req.body;
-    console.log(b)
     new Tables({
       title: b.title,
       members: [],
       transactions: [],
       prevTables: []
     }).save(function(err,table){
-      console.log(table);
       if (err) return res.send(500,{error:'database error'});
       Users
         .where('email').in(b.emails)
@@ -61,10 +57,10 @@ module.exports = function(app){
             return res.json(tbl);
           });
         });
-      Users
-        .where('email').in(b.emails)
-        .update({$addToSet: {tables: table._id}})
-        .exec(function(err){
+      Users.update({email:{$in: b.emails}},
+        {$addToSet: {tables: table._id}},
+        {multi:true},
+        function(err,num){
           if (err) return res.send(500,err);
         });
     });

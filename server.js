@@ -107,7 +107,7 @@ app.post('/login', function(req, res, next) {
       } else {
         req.session.cookie.maxAge = 1000 * 60 * 60;//one hour
       }
-      res.json(200, {'role': user.role, 'email':user.email, 'name':user.name});
+      res.json(200, {'role': user.role, 'email':user.email, 'name':user.name, 'currentTable':user.currentTable});
     });
 
   })(req, res, next);

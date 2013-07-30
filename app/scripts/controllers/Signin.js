@@ -9,7 +9,7 @@ app.controller('SigninCtrl', ['$scope','$location','Auth',function ($scope,$loca
       rememberme: $scope.rememberme
     },
     function(res){
-      $location.path('/home');
+      $location.path('/manage');
     },
     function(data,status){
       console.log(data);
