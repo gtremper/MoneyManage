@@ -1,3 +1,6 @@
-<h1>HOME</h1>
-<h2>{{test.value}}</h2>
-<button ng-click="change()">change</button>
+<h1>{{table.title}}</h1>
+<ul>
+  <li ng-repeat="member in table.members">
+      {{member.name}}: {{member.email}}
+  </li>
+</ul>

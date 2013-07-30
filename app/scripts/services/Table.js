@@ -11,10 +11,9 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
 
   var tables = {};
 
-  var promise;
-
   function getTables(callback){
-    $http.get('/api/get_tables').success(function(data){
+    console.log("GET TABLES");
+    return $http.get('/api/get_tables').success(function(data){
       console.log("got tables..");
       console.log(data);
       _.each(_.keys(tables), function(table){
@@ -35,10 +34,11 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
     });
   }
 
+var promise = getTables();
+
   $rootScope.$watch('user',function(user){
     if (!(user.role & accessLevels.user)) return;
-    console.log('WATCH');
-    getTables();
+    promise = getTables();
   });
 
   var Table = {};
@@ -58,6 +58,19 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
       console.log(data);
     });
   };
+
+  Table.getTable = function(){
+    return promise.then(function(){
+      if ($rootScope.user.currentTable){
+        return tables[$rootScope.user.currentTable];
+      } else {
+        console.log('default get table');
+        var id = _.keys(tables)[0];
+        $rootScope.user.currentTable = id;
+        return tables[id];
+      }
+    });
+  }
 
   Table.switchTable = function(id){
     $rootScope.user.currentTable = id;
