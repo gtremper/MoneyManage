@@ -30,6 +30,7 @@ module.exports = function(app){
   app.get('/api/get_tables', function(req,res){
     Tables
       .where('_id').in(req.user.tables)
+      .populate('members', 'name email _id')
       .exec(function(err,tables){
         if (err) res.send(500,{error:'database error'});
         return res.json(tables);
@@ -109,12 +110,12 @@ module.exports = function(app){
   app.post('/api/add_transaction',function(req,res){
     var b = req.body;
     Tables
-      .findById(b.table_id)
-      .update({$push: {transactions: b.transaction}})
-      .exec(function(err,tbl){
+      .findByIdAndUpdate(b.table_id,
+      {$push: {transactions: b.transaction}},
+      function(err,tbl){
         if (err) return res.send(500,{error:'database error'});
         if (!tbl) return res.send(400,{error:'table not found'});
-        res.send(200);
+        res.json(tbl.transactions);
       });
   });
 
@@ -123,7 +124,7 @@ module.exports = function(app){
     var b = req.body;
     Users.findByIdAndUpdate(req.user._id,{currentTable: b.table_id}, function(err, usr){
       if (err) return res.send(500,{error:'database error'});
-      res.json(usr);
+      res.send(200);
     })
   });
 

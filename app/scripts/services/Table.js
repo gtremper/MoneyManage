@@ -1,6 +1,7 @@
 'use strict';
 
-app.factory('Table', ['$http','$rootScope','$location','$q',function ($http,$rootScope,$location,$q) {
+app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',function ($http,$rootScope,$location,$q,accessLevels) {
+
   function transaction(split,title,description,amount){
     this.split = split; //people spliting transaction(including owner)
     this.title = title;
@@ -8,80 +9,88 @@ app.factory('Table', ['$http','$rootScope','$location','$q',function ($http,$roo
     this.amount = amount;
   }
 
-  var myTables = {};
-  var currentTable = null;
-  var
+  var tables = {};
 
   function getTables(callback){
-    $http.get('/api/get_tables').success(function(data){
-      for(var i=0, len = data.length; i<len; i++){
-        myTables[data[i]._id] = data[i];
-      }
-      currentTable = myTables[$rootScope.user.currentTable];
-      if (callback!===undefined) callback();
+    $http.get('/api/get_table').success(function(resp){
+      _.each(_.keys(tables), function(table){
+        delete tables[table];
+      });
+
+      var data = resp.data;
+      _.each(data,function(table){
+        var new_members = {}
+        _.each(table.members, function(member){
+          new_members[member._id] = {name: member.name, email:member.email};
+        });
+        table.members = new_members;
+        tables[table._id] = table;
+      });
+      typeof callback === 'function' && callback();
+    }).error(function(reps){
+      console.log("ERROR");
+      console.log(reps);
     });
   }
 
+  getTables();
+
   $rootScope.$watch('user',function(user){
-    if (user.role & $rootScope.accessLevels.user){
-      getTables();
-    }
+    if (!(user.role & accessLevels.user)) return;
+    console.log('WATCH');
+    getTables();
   });
 
-
-  return {
-    newTable: function (name,members) {
-      $http.post('/api/create_table',{title: name, emails: members})
-      .success(function(table){
-        myTables[table._id] = table;
-        currentTable = table;
-        $rootScope.user.currentTable = table._id;
-        $location.path('/home');
-      })
-      .error(function(data){
-        console.log("ERROR CREATING TABLE");
-        console.log(data);
-      });
-    },
-    changeTable: function(table_id){
-      currentTable = myTables[table_id];
+  Table.newTable = function(name,members){
+    $http.post('/api/create_table',{title: name, emails: members})
+    .success(function(table){
       $rootScope.user.currentTable = table._id;
-    },
-    addMember: function(email){
-      $http.post('/api/add_member',{'email':email, table_id: currentTable._id})
-      .success(function(data){
-        currentTable = myTables[currentTable._id] = data;
-      })
-      .error(function(data){
-        console.log("ERROR ADDING MEMBER");
-        console.log(data);
+      getTables(function(){
+        $location.path('/home');
       });
-    },
-    getTableNames: function(){
-      return _.map(myTables,function(table){
-        return {name:table.title, _id: table._id};
-      });
-    },
-    getTableMembers: function(){
-      $http.get('/api/get_member_names',currentTable.members)
-      .success(function(data){
-        return data;
-      })
-      .error(function(data){
-        console.log("ERROR Gettings MEMBERs");
-        console.log(data);
-      });
-    },
-    addTransaction: function(split,title,description,amount){
-      var trans = new transaction(split,title,description,amount);
-      $http.post('/api/add_transaction',{table_id: currentTable._id, transaction: trans})
-      .success(function(data){
-        currentTable = myTables[currentTable._id] = data;
-      })
-      .error(function(data){
-        console.log("ERROR ADDING TRANSACTION");
-        console.log(data);
-      });
-    }
+    })
+    .error(function(data){
+      console.log("ERROR CREATING TABLE");
+      console.log(data);
+    });
   };
+
+  Table.getTable = function(id){
+    $rootScope.user.currentTable = id;
+    $http.post('/api/set_current_table',{table_id: id})
+    .success(function(){
+      console.log("table change success!");
+    })
+    .error(function(data){
+      console.log("ERROR SETTING CURRENT TABLE");
+      console.log(data);
+    });
+    return tables[id];
+  };
+
+  Table.addMember = function(email){
+    return $http.post('/api/add_member',{'email':email, table_id: $rootScope.user.currentTable})
+    .then(function(resp){
+      tables[$rootScope.user.currentTable] = resp.data;
+    },
+    function(resp){
+      console.log('ERROR ADDING MEMBER');
+      console.log(resp);
+    });
+  }
+
+  Table.addTransaction = function(split,title,description,amount){
+    var trans = new transaction(split,title,description,amount);
+    $http.post('/api/add_transaction',{table_id: $rootScope.user.currentTable, transaction: trans})
+    .then(function(resp){
+      tables[$rootScope.user.currentTable] = resp.data
+      return resp.data;
+    },
+    function(data){
+      console.log("ERROR ADDING TRANSACTION");
+      console.log(data);
+    });
+  }
+
+  return Table;
 }]);

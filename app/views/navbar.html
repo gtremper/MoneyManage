@@ -2,9 +2,6 @@
   <div class="pull-right" accessLevel="accessLevel.user">
     <a class="dropdown-toggle">{{user.email}}</a>
     <ul class="dropdown-menu">
-      <li ng-repeat="table in tables">
-        <a>{{table.name}}</a>
-      </li>
       <li><a ng-href="/new_table">Create New Table</a></li>
       <li><a ng-href="/manage">Manage Tables</a></li>
       <li class="divider"></li>
