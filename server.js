@@ -107,7 +107,7 @@ app.post('/login', function(req, res, next) {
       } else {
         req.session.cookie.maxAge = 1000 * 60 * 60;//one hour
       }
-      res.json(200, {'role': user.role, 'email':user.email, 'name':user.name, 'currentTable':user.currentTable});
+      res.json({'role': user.role, 'email':user.email, 'name':user.name, 'currentTable':user.currentTable, '_id':user._id});
     });
 
   })(req, res, next);
@@ -129,7 +129,7 @@ app.post('/register', function(req,res){
       if (err) return res.send(500,{error:'database error'});
       req.login(user,function(err){
         if (err) return res.send(500,{error:'authentication error'});
-        res.json(200, {'role': user.role, 'email':user.email, 'name':user.name});
+        res.json({'role': user.role, 'email':user.email, 'name':user.name});
       });
     });
   })

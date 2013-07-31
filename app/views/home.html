@@ -1,6 +1,124 @@
-<h1>{{table.title}}</h1>
-<ul>
-  <li ng-repeat="member in table.members">
-      {{member.name}}: {{member.email}}
-  </li>
-</ul>
+<div ng-switch on="tab" ng-animate="anim_dir" class="main">
+  <div ng-switch-default class="tab-pane table-tab">
+    <h1> Total: {{allTotal() | currency}} <small class="pull-right title">{{table.title}}</small> </h1>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>
+            {{user.name}} <br/>
+            Total: {{total(user) | currency}} <br/>
+            Balance: <span ng-class="{red:getBalance(user)<0}">{{getBalance(user) | currency}}</span>
+          </th>
+          <th ng-repeat="member in table.members">
+            {{person.name}} <br/>
+            Total: {{total(person) | currency}} <br/>
+            Balance: <span ng-class="{red:getBalance(member)<0}">{{getBalance(member) | currency}}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <ul ng-show="getItems(user).length">
+              <li ng-repeat="item in getItems(user)">
+                <span class="money_bullet">{{item.amount|currency}}</span>
+                <a ng-click="viewTrans(item)">{{item.title}}<span ng-hide="item.title">Untitled<span></a>
+              </li>
+            </ul>
+            <div ng-hide="getItems(user).length" style="margin-bottom:10px;">
+              No transactions
+            </div>
+            <button class="btn btn-primary" ng-click="changeTab('add','view-right')">Add</button>
+          </td>
+          <td ng-repeat="member in table.members">
+            <ul ng-show="getItems(member).length">
+              <li ng-repeat="item in getItems(member)">
+                <span class="money_bullet">{{item.amount|currency}}</span>
+                <a ng-click="viewTrans(item)">{{item.title}}<span ng-hide="item.title">Untitled<span></a>
+              </li>
+            </ul>
+            <div ng-hide="getItems(member).length" style="margin-bottom:10px;">
+              No transactions
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div ng-switch-when="add" class="addTransaction tab-pane">
+
+    <h1>Add Transaction</h1>
+    <form class="form-horizontal" name="AddTransaction" style="margin-top:20px;">
+      <div class="control-group">
+        <label class="control-label" for="title">Title:</label>
+        <div class="controls">
+          <input type="text" id="title" placeholder="Enter title" ng-model="title" autofocus>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="desciption">Description:</label>
+        <div class="controls">
+          <textarea id="desciption" placeholder="Enter description of transaction" ng-model="description"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="amount">Amount:</label>
+        <div class="controls">
+          <input id="amount" type="number" ng-model="amount" min="0" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Split between:</label>
+        <div class="controls">
+          <label class="checkbox">
+            <input type="checkbox" ng-click="toggleCheck(user)" ng-checked="true"> {{user.name}}
+          </label>
+          <label class="checkbox" ng-repeat="member in Table.members">
+            <input type="checkbox" ng-click="toggleCheck(member)" ng-checked="true"> {{member.name}}
+          </label>
+        </div>
+      </div>
+    </form>
+    <div style="margin-left:260px;">
+      <button class="btn btn-warning pull-left" ng-click="changeTab('home','view-left')">Cancel</button>
+      <button class="btn btn-success" ng-click="addItem();changeTab('home','view-left')">Add</button>
+    </div>
+
+  </div>
+  <div ng-switch-when="view" class="tab-pane">
+
+    <div class="pull-right" ng-init="edit=false">
+      <div>
+        <button class="btn" ng-hide="edit" ng-click="edit=true">Edit</button>
+      </div>
+      <div class="well" ng-show="edit">
+        <form>
+          <input type="text" ng-model="currentTrans.title" placeholder="Title"> <br>
+          <textarea ng-model="currentTrans.description" placeholder="Description"></textarea> <br>
+          <input type="number" ng-model="currentTrans.amount" min="0" step="0.01" placeholder="0.00">
+          <label class="checkbox">
+            <input type="checkbox" ng-click="editSplit(currentTrans.owner,currentTrans.split)" ng-checked="currentTrans.split.indexOf(currentTrans.owner)>=0"> {{user.name}}
+          </label>
+          <label class="checkbox" ng-repeat="owner in allOwnersExcept(currentUser)">
+            <input type="checkbox" ng-click="editSplit(owner.name,currentTrans.split)" ng-checked="currentTrans.split.indexOf(owner.name)>=0"> {{owner.name}}
+          </label>
+        </form>
+        <div>
+          <button class="btn btn-primary" ng-click="edit=false">Save</button>
+          <button class="btn btn-danger pull-right" ng-click="deleteTransaction(currentTrans);changeTab('home','view-right')">Delete</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h1>{{currentTrans.title}}<span ng-hide="currentTrans.title">Untitled</span> <small>on {{currentTrans.date | date:'mediumDate'}}</small></h1>
+      <p>{{currentTrans.description}}<span ng-hide="currentTrans.description">No description.</span></p>
+      <h3>{{currentTrans.amount | currency}} <small>split between...</small></h3>
+      <ul>
+        <li ng-repeat="person in currentTrans.split">
+          {{person}}
+        </li>
+      </ul>
+    </div>
+    <button class="btn" ng-click="changeTab('','view-right')">Back</button>
+  </div>
+</div>

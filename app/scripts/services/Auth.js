@@ -3,6 +3,7 @@
 app.factory('Auth',['$rootScope','$http','$cookieStore','$location','userRoles','accessLevels',function ($rootScope,$http,$cookieStore,$location,userRoles,accessLevels) {
 
   $rootScope.user = $cookieStore.get('user') || {email: '', role: userRoles.public};
+  console.log($rootScope.user);
   $cookieStore.remove('user');
 
   $rootScope.accessLevels = accessLevels;

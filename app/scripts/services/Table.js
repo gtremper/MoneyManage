@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',function ($http,$rootScope,$location,$q,accessLevels) {
+app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth',function ($http,$rootScope,$location,$q,accessLevels,Auth) {
 
   function transaction(split,title,description,amount){
     this.split = split; //people spliting transaction(including owner)
@@ -10,23 +10,26 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
   }
 
   var tables = {};
+  var promise = $q.defer();
 
   function getTables(callback){
     console.log("GET TABLES");
-    return $http.get('/api/get_tables').success(function(data){
+    $http.get('/api/get_tables').success(function(data){
       console.log("got tables..");
-      console.log(data);
       _.each(_.keys(tables), function(table){
         delete tables[table];
       });
       _.each(data,function(table){
         var new_members = {}
         _.each(table.members, function(member){
-          new_members[member._id] = {name: member.name, email:member.email};
+          if(member._id !== $rootScope.user._id){
+            new_members[member._id] = {name: member.name, email: member.email, _id:member._id};
+          }
         });
         table.members = new_members;
         tables[table._id] = table;
       });
+      promise.resolve();
       typeof callback === 'function' && callback();
     }).error(function(reps){
       console.log("ERROR");
@@ -34,11 +37,10 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels',funct
     });
   }
 
-var promise = getTables();
 
   $rootScope.$watch('user',function(user){
     if (!(user.role & accessLevels.user)) return;
-    promise = getTables();
+    getTables();
   });
 
   var Table = {};
@@ -60,30 +62,29 @@ var promise = getTables();
   };
 
   Table.getTable = function(){
-    return promise.then(function(){
+    return promise.promise.then(function(){
+      var tbl_id;
       if ($rootScope.user.currentTable){
-        return tables[$rootScope.user.currentTable];
+        tbl_id = $rootScope.user.currentTable;
       } else {
         console.log('default get table');
-        var id = _.keys(tables)[0];
-        $rootScope.user.currentTable = id;
-        return tables[id];
+        tbl_id = _.keys(tables)[0];
+        $rootScope.user.currentTable = tbl_id;
       }
+
+      $http.post('/api/set_current_table',{table_id: tbl_id})
+      .success(function(){
+        console.log("table change success!");
+      })
+      .error(function(data){
+        console.log("ERROR SETTING CURRENT TABLE");
+        console.log(data);
+      });
+
+      return tables[tbl_id];
+
     });
   }
-
-  Table.switchTable = function(id){
-    $rootScope.user.currentTable = id;
-    $http.post('/api/set_current_table',{table_id: id})
-    .success(function(){
-      console.log("table change success!");
-    })
-    .error(function(data){
-      console.log("ERROR SETTING CURRENT TABLE");
-      console.log(data);
-    });
-    return tables[id];
-  };
 
   Table.getAllTables = function(){
     return tables;
