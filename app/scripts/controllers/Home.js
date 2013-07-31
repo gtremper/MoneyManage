@@ -49,21 +49,14 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
         });
       }
     }();
-  });
 
-  $scope.tab = '';
-  $scope.anim_dir = '';
-  
-  $scope.viewTrans = function(trans){
-    $scope.currentTrans = trans;
-    $scope.changeTab('view','view-left');
-    console.log(trans);
-  }
+
+  });
   
   $scope.personalTotal = function(person){
     var amt = 0;
     angular.forEach($scope.table.transactions,function(trans){
-      if (trans.owner._id === person._id){
+      if (trans.owner === person._id){
         amt += trans.amount;
       }
     })
@@ -81,7 +74,7 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
   $scope.getItems = function(person){
     var items = []
     angular.forEach($scope.table.transactions,function(trans){
-      if (trans.owner._id === person._id){
+      if (trans.owner === person._id){
         items.push(trans);
       }
     });
@@ -100,11 +93,12 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
   
   /* View Stuff */
   
-  $scope.editSplit = function(name,split){
-    if (split.indexOf(name) === -1) {
-      split.push(name);
+  $scope.editSplit = function(person,split){
+    var id = person._id;
+    if (split.indexOf(id) === -1) {
+      split.push(id);
     } else {
-      split.splice(split.indexOf(name), 1);
+      split.splice(split.indexOf(id), 1);
     }
     console.log(split)
   }
@@ -115,13 +109,19 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
   }
 
   /** Animations **/
+  $scope.tab = '';
+  $scope.anim_dir = '';
+  
+  $scope.viewTrans = function(trans){
+    $scope.currentTrans = trans;
+    $scope.changeTab('view','view-left');
+    console.log(trans);
+  }
   $scope.changeTab = function(change,anim){
     if (anim !== undefined){
       $scope.anim_dir = anim;
     }
     $scope.tab = change;
   }
-
-
 }]);
 

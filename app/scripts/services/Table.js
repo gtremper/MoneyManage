@@ -50,9 +50,9 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
       $rootScope.user.currentTable = table._id;
       $http.post('/api/set_current_table',{table_id: table._id}).success(function(){
         console.log("set current table")
-      });
-      getTables(function(){
-        $location.path('/manage');
+        getTables(function(){
+          $location.path('/manage');
+        });
       });
     })
     .error(function(data){
@@ -104,9 +104,9 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
   Table.addTransaction = function(split,title,description,amount){
     var trans = new transaction(split,title,description,amount);
     return $http.post('/api/add_transaction',{table_id: $rootScope.user.currentTable, transaction: trans})
-    .then(function(data){
-      tables[$rootScope.user.currentTable] = data
-      return data;
+    .then(function(resp){
+      tables[$rootScope.user.currentTable].transactions = resp.data;
+      return resp.data;
     },
     function(data){
       console.log("ERROR ADDING TRANSACTION");

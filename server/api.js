@@ -107,12 +107,14 @@ module.exports = function(app){
   /* Body needs "table_id" and "transaction" */
   app.post('/api/add_transaction',function(req,res){
     var b = req.body;
+    b.transaction.owner = req.user._id;
     Tables
       .findByIdAndUpdate(b.table_id,
       {$push: {transactions: b.transaction}},
       function(err,tbl){
         if (err) return res.send(500,{error:'database error'});
         if (!tbl) return res.send(400,{error:'table not found'});
+        console.log(tbl.transactions);
         res.json(tbl.transactions);
       });
   });
