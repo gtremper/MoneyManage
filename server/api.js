@@ -66,6 +66,60 @@ module.exports = function(app){
     });
   });
 
+  app.post('/api/edit_table', function(req,res){
+    var title = req.body.title;
+    var new_members = req.body.new_members;
+    var table_id = req.body.table_id;
+    console.log(req.body);
+
+    if (!new_members){
+      Tables
+        .findByIdAndUpdate(table_id,{title:title},function(err,table){
+          if (err) return res.send(500,err);
+          res.json(table)
+        });
+    } else {
+      Users
+        .where('email').in(new_members)
+        .select('_id')
+        .exec(function(err, ids){
+          console.log(ids);
+          if (err) return res.send(500,err);
+          Tables.findByIdAndUpdate(table_id, {$addToSet: {members: {$each: ids}}, title:title}, function(err, tbl){
+            if(err) return res.send(500,{error:'database error'});
+            return res.json(tbl);
+          });
+        });
+      Users.update({email:{$in: new_members}},
+        {$addToSet: {tables: table_id}},
+        {multi:true},
+        function(err,num){
+          if (err) return res.send(500,err);
+        });
+    }
+  })
+
+  app.post('/api/delete_table',function(req,res){
+    var table_id = req.body.table_id;
+    Tables
+      .findById(b.table_id,
+      function(err,table){
+        if (err) return res.send(500,{error:'database error'});
+        if (!table) return res.send(400,{error:'table not found'});
+        
+        Users.update({_id:{$in: table.members}},
+          {$pull: {tables: table_id}},
+          {multi:true},
+          function(err,num){
+            if (err) return res.send(500,err);
+          });
+
+        table.remove(function(err){
+          if (err) return res.send(500,{error:'database error'});
+        })
+      });
+  });
+
   /* Body needs "email" and "table_id */
   app.post('/api/add_member',function(req,res){
     var b = req.body;
@@ -86,22 +140,6 @@ module.exports = function(app){
       .exec(function(err){
         if (err) return res.send(500,err);
       });
-  });
-
-  /* Body needs member_ids */
-  app.get('/api/get_member_names',function(req,res){
-    Users
-      .where('_id').in(req.body.member_ids)
-      .select('name _id')
-      .exec(function(err,names){
-        if (err) return res.send(500,{error:'database error'});
-        _.each(names,function(name,index){
-          if (name._id === req.user._id){
-            names.splice(index,1);
-          }
-        })
-        return res.json(names);
-      })
   });
 
   /* Body needs "table_id" and "transaction" */

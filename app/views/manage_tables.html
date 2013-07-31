@@ -1,5 +1,4 @@
 <h1>Manage Tables</h1>
-<h2>{{test.value}}</h2>
 <table class="table">
   <thead>
     <tr>
@@ -10,12 +9,14 @@
   <tbody>
     <tr ng-repeat="(id,table) in tables">
       <td>
-        <a ng-href="/home" ng-click="changeTable(id)">
+        <a ng-href="#/home" ng-click="changeTable(id)">
           {{table.title}}
         </a>
+        <a ng-href="#/edit_table/{{id}}" class="btn pull-right">Edit</a>
       </td>
       <td>
         <ul>
+          <li style="display:inline; float:left margin-right:20px;">{{user.name}}</li>
           <li style="display:inline; float:left margin-right:20px;" ng-repeat="(id,member) in table.members">
             {{member.name}}
           </li>
@@ -24,7 +25,7 @@
     </tr>
     <tr>
       <td>
-        <a class="btn" ng-href="/new_table">New Table</a>
+        <a class="btn" ng-href="#/new_table">New Table</a>
       </td>
       <td>
         

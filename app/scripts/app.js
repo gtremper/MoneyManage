@@ -22,11 +22,13 @@ var app = angular.module('MoneyManageApp', ['ui','ui.bootstrap','ngCookies']);
 
 app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels', function ($routeProvider,$locationProvider,$httpProvider,accessLevels) {
   $routeProvider
+    /*
     .when('/', {
       templateUrl: 'views/main.html',
       controller: 'MainCtrl',
       access: accessLevels.user
     })
+    */
     .when('/signin',{
       templateUrl: 'views/signin.html',
       controller: 'SigninCtrl',
@@ -52,16 +54,21 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
       controller: 'NewTableCtrl',
       access: accessLevels.user
     })
+    .when('/edit_table/:id',{
+      templateUrl: 'views/edit_table.html',
+      //
+      controller: 'EditTableCtrl',
+      access: accessLevels.user
+    })
     .when('/account',{
       templateUrl: 'views/account.html',
       controller: 'AccountCtrl',
       access: accessLevels.user
     })
     .otherwise({
-      redirectTo: '/signin'
+      redirectTo: '/manage'
     });
 
-  $locationProvider.html5Mode(true);
 
   $httpProvider.responseInterceptors.push(['$location','$q',function($location,$q){
     function success(response){
@@ -90,6 +97,7 @@ app.run(['$rootScope','$location','Auth',function($rootScope,$location,Auth){
     }
   });
 }]);
+
 
 
 

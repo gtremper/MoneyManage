@@ -87,13 +87,33 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
   }
 
   Table.getAllTables = function(){
-    return tables;
+    return promise.promise.then(function(){
+      return tables;
+    });
   }
 
-  Table.addMember = function(email,id){
-    return $http.post('/api/add_member',{'email':email, table_id: id})
+  Table.editTable = function(title,members,id){
+    var body = {
+      title: title,
+      new_members: members,
+      table_id: id
+    }
+    return $http.post('/api/edit_table',body)
     .then(function(resp){
       tables[id] = resp.data;
+      $location.path('/manage');
+    },
+    function(resp){
+      console.log('ERROR ADDING MEMBER');
+      console.log(resp);
+    });
+  }
+
+  Table.deleteTable = function(id){
+    return $http.post('/api/delete_table',{table_id: id})
+    .then(function(resp){
+      tables[id] = resp.data;
+      $location.path('/manage');
     },
     function(resp){
       console.log('ERROR ADDING MEMBER');

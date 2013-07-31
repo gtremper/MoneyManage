@@ -7,6 +7,7 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
     members: {},
     transactions: []
   }
+  
   Table.getTable().then(function(table){
     $scope.table = table;
     console.log(table);
