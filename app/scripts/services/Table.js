@@ -103,10 +103,10 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
 
   Table.addTransaction = function(split,title,description,amount){
     var trans = new transaction(split,title,description,amount);
-    $http.post('/api/add_transaction',{table_id: $rootScope.user.currentTable, transaction: trans})
-    .then(function(resp){
-      tables[$rootScope.user.currentTable] = resp.data
-      return resp.data;
+    return $http.post('/api/add_transaction',{table_id: $rootScope.user.currentTable, transaction: trans})
+    .then(function(data){
+      tables[$rootScope.user.currentTable] = data
+      return data;
     },
     function(data){
       console.log("ERROR ADDING TRANSACTION");
