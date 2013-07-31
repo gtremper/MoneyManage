@@ -119,6 +119,39 @@ module.exports = function(app){
       });
   });
 
+  /* Body needs "table_id" and "transaction" */
+  app.post('/api/edit_transaction',function(req,res){
+    var b = req.body;
+    Tables
+      .findById(b.table_id,
+      function(err,table){
+        if (err) return res.send(500,{error:'database error'});
+        if (!table) return res.send(400,{error:'table not found'});
+        var id = b.transaction._id
+        _.extend(table.transactions.id(id), b.transaction);
+        table.save(function(err){
+          if (err) return res.send(500,{error:'database error'});
+          res.json(table.transactions);
+        });
+      });
+  });
+
+  /* Body needs "table_id" and "trans_id" */
+  app.post('/api/delete_transaction',function(req,res){
+    var b = req.body;
+    Tables
+      .findById(b.table_id,
+      function(err,table){
+        if (err) return res.send(500,{error:'database error'});
+        if (!table) return res.send(400,{error:'table not found'});
+        table.transactions.id(b.trans_id).remove();
+        table.save(function(err){
+          if (err) return res.send(500,{error:'database error'});
+          return res.json(table.transactions);
+        });
+      });
+  });
+
   /* Body needs "table_id" */
   app.post('/api/set_current_table',function(req,res){
     var b = req.body;

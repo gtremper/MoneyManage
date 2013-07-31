@@ -114,5 +114,29 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
     });
   }
 
+  Table.editTransaction = function(trans){
+    return $http.post('/api/edit_transaction',{table_id: $rootScope.user.currentTable, transaction: trans})
+    .then(function(resp){
+      tables[$rootScope.user.currentTable].transactions = resp.data;
+      return resp.data;
+    },
+    function(data){
+      console.log("ERROR ADDING TRANSACTION");
+      console.log(data);
+    });
+  }
+
+  Table.deleteTransaction = function(id){
+    return $http.post('/api/delete_transaction',{table_id: $rootScope.user.currentTable, trans_id: id})
+    .then(function(resp){
+      tables[$rootScope.user.currentTable].transactions = resp.data;
+      return resp.data;
+    },
+    function(data){
+      console.log("ERROR ADDING TRANSACTION");
+      console.log(data);
+    });
+  }
+
   return Table;
 }]);

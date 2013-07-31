@@ -93,8 +93,9 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
   
   /* View Stuff */
   
-  $scope.editSplit = function(person,split){
+  $scope.editSplit = function(person){
     var id = person._id;
+    var split = $scope.currentTrans.split;
     if (split.indexOf(id) === -1) {
       split.push(id);
     } else {
@@ -102,10 +103,25 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
     }
     console.log(split)
   }
+
+  $scope.save = function(){
+    Table.editTransaction($scope.currentTrans)
+    .then(function(data){
+      $scope.changeTab('home','view-right');
+    },
+    function(data){
+      console.log("edit eerrro");
+    });
+  }
   
-  $scope.deleteTransaction = function(trans){
-    $scope.transactions.splice($scope.transactions.indexOf(trans), 1);
-  
+  $scope.delete = function(){
+    Table.deleteTransaction($scope.currentTrans._id)
+    .then(function(data){
+      $scope.changeTab('home','view-right');
+    },
+    function(data){
+      console.log("delete eerrro");
+    });
   }
 
   /** Animations **/

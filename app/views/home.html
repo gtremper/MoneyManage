@@ -97,15 +97,15 @@
           <textarea ng-model="currentTrans.description" placeholder="Description"></textarea> <br>
           <input type="number" ng-model="currentTrans.amount" min="0" step="0.01" placeholder="0.00">
           <label class="checkbox">
-            <input type="checkbox" ng-click="editSplit(currentTrans.owner,currentTrans.split)" ng-checked="currentTrans.split.indexOf(currentTrans.owner)>=0"> {{user.name}}
+            <input type="checkbox" ng-click="editSplit(user)" ng-checked="currentTrans.split.indexOf(user._id)>=0"> {{user.name}}
           </label>
-          <label class="checkbox" ng-repeat="owner in allOwnersExcept(currentUser)">
-            <input type="checkbox" ng-click="editSplit(owner.name,currentTrans.split)" ng-checked="currentTrans.split.indexOf(owner.name)>=0"> {{owner.name}}
+          <label class="checkbox" ng-repeat="member in table.members">
+            <input type="checkbox" ng-click="editSplit(member)" ng-checked="currentTrans.split.indexOf(member._id)>=0"> {{member.name}}
           </label>
         </form>
         <div>
-          <button class="btn btn-primary" ng-click="edit=false">Save</button>
-          <button class="btn btn-danger pull-right" ng-click="deleteTransaction(currentTrans);changeTab('home','view-right')">Delete</button>
+          <button class="btn btn-primary" ng-click="edit=false;save()">Save</button>
+          <button class="btn btn-danger pull-right" ng-click="delete()">Delete</button>
         </div>
       </div>
     </div>
@@ -114,8 +114,9 @@
       <p>{{currentTrans.description}}<span ng-hide="currentTrans.description">No description.</span></p>
       <h3>{{currentTrans.amount | currency}} <small>split between...</small></h3>
       <ul>
-        <li ng-repeat="person in currentTrans.split">
-          {{person}}
+        <li
+        <li ng-repeat="id in currentTrans.split">
+          {{id | idToName: table}}
         </li>
       </ul>
     </div>
