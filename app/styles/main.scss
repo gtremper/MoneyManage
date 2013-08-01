@@ -23,6 +23,17 @@ input[type=number]{
   height:30px !important;
 }
 
+input.ng-invalid:focus,
+textarea.ng-invalid:focus,
+select.ng-invalid:focus {
+  color: #b94a48;
+  border-color: #ee5f5b;
+  border-color: #e9322d;
+  -webkit-box-shadow: 0 0 6px #f8b9b7;
+  -moz-box-shadow: 0 0 6px #f8b9b7;
+  box-shadow: 0 0 6px #f8b9b7;
+}
+
 
 /* Main Page */
 .signin-container{

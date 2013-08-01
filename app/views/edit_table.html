@@ -1,27 +1,31 @@
-<h1>Edit Group</h1>
 
-<form class="form-horizontal" name="EditTable">
-  <div class="control-group">
-    <label class="control-label" for="title">Title:</label>
-    <div class="controls">
-      <input type="text" id="title" placeholder="Enter title" ng-model="form.title" name="title">
+<div style="margin: 0 auto;width:600px;">
+  <h1>Edit Group</h1>
+  <form class="form-horizontal" name="EditGroup" ng-submit="save()">
+    <div class="control-group">
+      <label class="control-label" for="title">Title:</label>
+      <div class="controls">
+        <input type="text" id="title" placeholder="Enter title" ng-model="form.title" name="title" required>
+      </div>
     </div>
-  </div>
-
-  <div class="control-group">
-    <label class="control-label" for="emails">Members:</label>
-    <div class="controls">
-      <ul>
-        <li>{{user.email}}</li>
-        <li ng-repeat="member in old_members">{{member.email}}</li>
-        <li ng-repeat="email in form.emails">{{email}}</li>
-      </ul>
-      <textarea id="emails" ng-model="form.emails" name="emails" placeholder="Enter a comma seperated list of emails" ng-list>
-      </textarea>
+  
+    <div class="control-group">
+      <label class="control-label" for="emails">Members:</label>
+      <div class="controls">
+        <ul>
+          <li>{{user.email}}</li>
+          <li ng-repeat="member in old_members">{{member.email}}</li>
+          <li ng-repeat="email in form.emails">{{email}}</li>
+        </ul>
+        <textarea id="emails" ng-model="form.emails" name="emails" placeholder="Enter a comma seperated list of emails" ng-list>
+        </textarea>
+      </div>
     </div>
-  </div>
+    <div class="controls">
+      <button type="submit" class="btn btn-success" ng-disabled="!EditGroup.$valid">Submit</button>
+    </div>
+  </form>
   <a class="btn btn-warning" ng-href="#/manage">Cancel</a>
-  <button class="btn btn-success" ng-click="save()">Submit</button>
   <button class="btn btn-danger" ng-click="delete()">Delete</button>
-</form>
+</div>
 

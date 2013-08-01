@@ -18,6 +18,7 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
       var checkboxes = _.keys($scope.table.members);
       checkboxes.push($rootScope.user._id);
       var allSelected = checkboxes.slice(0);//copy
+      $scope.checkboxes = checkboxes;
   
       $scope.toggleCheck = function(member){
         var id = member._id;
@@ -27,6 +28,7 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
         } else {
           checkboxes.splice(index,1);
         }
+        console.log($scope.checkboxes);
       }
   
       $scope.addItem = function(){

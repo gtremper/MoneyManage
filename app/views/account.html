@@ -1,19 +1,25 @@
-<h1>Account Settings</h1>
+<div style="width:600px; margin:0 auto;">
 
-<form class="form-horizontal" name="EditTable">
-  <div class="control-group">
-    <label class="control-label" for="name">Name:</label>
-    <div class="controls">
-      <input type="text" id="name" ng-model="form.name">
-    </div>
-  </div>
+  <h1 style="margin-bottom:20px;">Account Settings</h1>
 
-  <div class="control-group">
-    <label class="control-label" for="email">Email:</label>
-    <div class="controls">
-      <input type="text" id="email" ng-model="form.email">
+  <form class="form-horizontal" name="EditTable" ng-submit="save()">
+    <div class="control-group">
+      <label class="control-label" for="name">Name:</label>
+      <div class="controls">
+        <input type="text" id="name" ng-model="form.name">
+      </div>
     </div>
-  </div>
-</form>
-<a class="btn btn-warning" ng-href="#/manage">Cancel</a>
-<button class="btn btn-success" ng-click="save()">Submit</button>
+  
+    <div class="control-group">
+      <label class="control-label" for="email">Email:</label>
+      <div class="controls">
+        <input type="text" id="email" ng-model="form.email">
+      </div>
+    </div>
+    <div class="controls">
+      <button type="submit" class="btn btn-success">Submit</button>
+      <a class="btn btn-warning" ng-href="#/manage">Cancel</a>
+    </div>
+  </form>
+
+</div>

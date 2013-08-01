@@ -1,20 +1,28 @@
 'use strict';
 
-app.controller('RegisterCtrl', ['$scope','$location','Auth',function ($scope,$location,Auth) {
+app.controller('RegisterCtrl', ['$scope','$location','$timeout','Auth',function ($scope,$location,$timeout,Auth) {
+
+  $scope.newuser = {};
+  $scope.userExists = false;
 
   $scope.register = function(){
     Auth.register({
-      email: $scope.email,
-      password: $scope.password,
-      name: $scope.name
+      email: $scope.newuser.email,
+      password: $scope.newuser.password,
+      name: $scope.newuser.name
     },
     function(res){
       $location.path('/#manage');
     },
-    function(data,status,headers,config){
-      console.log("error");
-      console.log(data);
-      console.log(status);
+    function(data){
+      $scope.newuser.email = '';
+      $scope.newuser.password = '';
+      if (data.error === "user already exists"){
+        $scope.userExists = true;
+        $timeout(function(){
+          $scope.userExists = false;;
+        },3000);
+      };
     });
   };
 }]);

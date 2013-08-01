@@ -1,6 +1,9 @@
 'use strict';
 
 app.controller('NewTableCtrl', ['$rootScope','$scope','Table','$location',function ($rootScope,$scope,Table,$location) {
+
+  $scope.group = {};
+
   $scope.createTable = function(){
     var emails = $scope.emails || [];
     console.log(emails);
@@ -8,6 +11,6 @@ app.controller('NewTableCtrl', ['$rootScope','$scope','Table','$location',functi
       emails.push($rootScope.user.email);
     }
     console.log(emails);
-    Table.newTable($scope.title, emails)
+    Table.newTable($scope.group.title, emails)
   }
 }]);

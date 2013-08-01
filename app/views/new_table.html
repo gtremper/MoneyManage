@@ -1,23 +1,27 @@
-<h1>New Group</h1>
-<form class="form-horizontal" ng-submit="createTable()">
-  <div class="control-group">
-    <label class="control-label" for="title">Title:</label>
-    <div class="controls">
-      <input type="text" id="title" placeholder="Enter title" ng-model="title" name="title">
+<div style="width:550px; margin: 0 auto;">
+  <h1 style="margin-bottom:20px;">New Group</h1>
+  <form class="form-horizontal" ng-submit="createTable()" name="newgroup">
+    <div class="control-group">
+      <label class="control-label" for="title">Title:</label>
+      <div class="controls">
+        <input type="text" id="title" placeholder="Enter title" ng-model="group.title" name="title" required>
+      </div>
     </div>
-  </div>
-
-  <div class="control-group">
-    <label class="control-label" for="emails">Members:</label>
-    <div class="controls">
-      <ul>
-        <li>{{user.email}}</li>
-        <li ng-repeat="email in emails">{{email}}</li>
-      </ul>
-      <textarea id="emails" ng-model="emails" placeholder="Enter a comma seperated list of emails" ng-list name="emails">
-      </textarea>
+  
+    <div class="control-group">
+      <label class="control-label" for="emails">Members:</label>
+      <div class="controls">
+        <ul>
+          <li>{{user.email}}</li>
+          <li ng-repeat="email in group.emails">{{email}}</li>
+        </ul>
+        <textarea id="emails" ng-model="group.emails" placeholder="Enter a comma seperated list of emails" ng-list name="emails">
+        </textarea>
+      </div>
     </div>
-  </div>
-  <a class="btn btn-warning" ng-href="#/manage">Cancel</a>
-  <button class="btn btn-success">Submit</button>
-</form>
+    <div class="controls">
+      <button ng-disabled="!newgroup.$valid" type="submit" class="btn btn-success">Submit</button>
+      <a class="btn btn-warning" ng-href="#/manage">Cancel</a>
+    </div>
+  </form>
+</div>

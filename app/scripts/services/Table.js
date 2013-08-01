@@ -104,7 +104,8 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
     }
     return $http.post('/api/edit_table',body)
     .then(function(resp){
-      tables[id] = resp.data;
+      //tables[id] = resp.data;
+      getTables();
       $location.path('#/manage');
     },
     function(resp){

@@ -46,44 +46,44 @@
     </table>
   </div>
   <div ng-switch-when="add" class="addTransaction tab-pane">
-
-    <h1>Add Transaction</h1>
-    <form class="form-horizontal" name="AddTransaction" style="margin-top:20px;">
-      <div class="control-group">
-        <label class="control-label" for="title">Title:</label>
-        <div class="controls">
-          <input type="text" id="title" placeholder="Enter title" ng-model="new.title" autofocus>
+    <div style="width:700px;margin:0 auto;">
+      <h1>Add Transaction</h1>
+      <form novalidate class="form-horizontal" name="AddTransaction" style="margin-top:20px;" ng-submit="addItem()">
+        <div class="control-group">
+          <label class="control-label" for="title">Title:</label>
+          <div class="controls">
+            <input type="text" id="title" placeholder="Enter title" ng-model="new.title" required>
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="desciption">Description:</label>
-        <div class="controls">
-          <textarea id="desciption" placeholder="Enter description of transaction" ng-model="new.description"></textarea>
+        <div class="control-group">
+          <label class="control-label" for="desciption">Description:</label>
+          <div class="controls">
+            <textarea id="desciption" placeholder="Enter description of transaction" ng-model="new.description"></textarea>
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="amount">Amount:</label>
-        <div class="controls">
-          <input id="amount" type="number" ng-model="new.amount" min="0" step="0.01" placeholder="0.00">
+        <div class="control-group">
+          <label class="control-label" for="amount">Amount:</label>
+          <div class="controls">
+            <input id="amount" type="number" ng-model="new.amount" min="0" step="0.01" placeholder="0.00" required>
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label">Split between:</label>
-        <div class="controls">
-          <label class="checkbox">
-            <input type="checkbox" ng-click="toggleCheck(user)" ng-checked="true"> {{user.name}}
-          </label>
-          <label class="checkbox" ng-repeat="member in table.members">
-            <input type="checkbox" ng-click="toggleCheck(member)" ng-checked="true"> {{member.name}}
-          </label>
+        <div class="control-group">
+          <label class="control-label">Split between:</label>
+          <div class="controls">
+            <label class="checkbox">
+              <input type="checkbox" ng-click="toggleCheck(user)" ng-checked="true"> {{user.name}}
+            </label>
+            <label class="checkbox" ng-repeat="member in table.members">
+              <input type="checkbox" ng-click="toggleCheck(member)" ng-checked="true"> {{member.name}}
+            </label>
+          </div>
         </div>
-      </div>
-    </form>
-    <div style="margin-left:260px;">
-      <button class="btn btn-warning pull-left" ng-click="changeTab('home','view-left')">Cancel</button>
-      <button class="btn btn-success" ng-click="addItem()">Add</button>
+        <div class="controls">
+          <button type="submit" class="btn btn-success" ng-disabled="!AddTransaction.$valid || !checkboxes.length">Add</button>
+          <button class="btn btn-warning" ng-click="changeTab('home','view-left')">Cancel</button>
+        </div>
+      </form>
     </div>
-
   </div>
   <div ng-switch-when="view" class="tab-pane">
 
@@ -92,10 +92,10 @@
         <button class="btn" ng-hide="edit || (currentTrans.owner !== user._id)" ng-click="edit=true">Edit</button>
       </div>
       <div class="well" ng-show="edit">
-        <form>
-          <input type="text" ng-model="currentTrans.title" placeholder="Title"> <br>
+        <form novalidate name="view">
+          <input type="text" ng-model="currentTrans.title" placeholder="Title" required> <br>
           <textarea ng-model="currentTrans.description" placeholder="Description"></textarea> <br>
-          <input type="number" ng-model="currentTrans.amount" min="0" step="0.01" placeholder="0.00">
+          <input type="number" ng-model="currentTrans.amount" min="0" step="0.01" placeholder="0.00" required>
           <label class="checkbox">
             <input type="checkbox" ng-click="editSplit(user)" ng-checked="currentTrans.split.indexOf(user._id)>=0"> {{user.name}}
           </label>
@@ -104,7 +104,7 @@
           </label>
         </form>
         <div>
-          <button class="btn btn-primary" ng-click="edit=false;save()">Save</button>
+          <button class="btn btn-primary" ng-click="edit=false;save()" ng-disabled="!view.$valid || !currentTrans.split.length">Save</button>
           <button class="btn btn-danger pull-right" ng-click="delete()">Delete</button>
         </div>
       </div>
