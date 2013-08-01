@@ -15,6 +15,7 @@ app.controller('RegisterCtrl', ['$scope','$location','$timeout','Auth',function 
       $location.path('/#manage');
     },
     function(data){
+      console.log(data);
       $scope.newuser.email = '';
       $scope.newuser.password = '';
       if (data.error === "user already exists"){

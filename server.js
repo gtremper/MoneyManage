@@ -4,13 +4,14 @@ var express = require('express'),
     path = require('path'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
+    bcrypt = require('bcrypt'),
+    _ = require('underscore'),
     userRoles = require('./server/routingConfig').userRoles,
     userLevels = require('./server/routingConfig').userLevels,
     mongoose = require('mongoose'),
     Users = require('./server/models').Users;
 
 var app = module.exports = express();
-
 
 // all environments
 app.configure(function(){
@@ -54,23 +55,25 @@ passport.use(new LocalStrategy({
     passwordField: 'password'
   },
   function(email, password, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-      
-      // Find the user by email.  If there is no user with the given
-      // email, or the password is not correct, set the user to `false` to
-      // indicate failure and set a flash message.  Otherwise, return the
-      // authenticated `user`.
-      Users.findOne({'email':email}, function(err, user) {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false, { error: 'user doesnt exist'}); }
+    // Find the user by email.  If there is no user with the given
+    // email, or the password is not correct, set the user to `false` to
+    // indicate failure and set a flash message.  Otherwise, return the
+    // authenticated `user`.
+    console.log("pre find")
+    Users.findOne({'email':email}, function(err, user) {
+      console.log("Strategy error");
+      console.log(err);
+      if (err) { return done(err); }
+      if (!user) { return done(null, false, { error: 'user doesnt exist'}); }
 
-        if (user.password != password){ 
+      bcrypt.compare(password, user.password, function(err, match){
+        if (err) return done(err);
+        if (!match){ 
           return done(null, false, { error: 'invalid password' });
         }
         return done(null, user);
       })
-    });
+    })
   }
 ));
 
@@ -100,31 +103,44 @@ app.post('/login', function(req, res, next) {
     if (!user) return res.send(400,info);
 
     req.login(user, function(err){
-      if(err) return res.send(500,{error:'authentication error'});
+      if(err) return res.send(500,err);
 
       if(req.body.rememberme){
         req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;//one week
       } else {
         req.session.cookie.maxAge = 1000 * 60 * 60;//one hour
       }
-      res.json({'role': user.role, 'email':user.email, 'name':user.name, 'currentTable':user.currentTable, '_id':user._id});
+      res.json(_.pick(user,'role','email','name','currentTable','_id'));
     });
 
   })(req, res, next);
 });
 
 app.post('/register', function(req,res){
-  var b = req.body;
-  new Users({
-    name: b.name,
-    email: b.email,
-    password: b.password,
-    role: userRoles.user,
-  }).save(function(err,user){
-    if (err) return res.send(400,{error:'user already exists'});
-    req.login(user,function(err){
-      if (err) return res.send(500,{error:'authentication error'});
-      res.json({'role': user.role, 'email':user.email, 'name':user.name});
+  var name = req.body.name;
+  var email = req.body.email;
+  var password = req.body.password;
+  bcrypt.hash(password, 10, function(err, hash){
+    if (err) return res.send(500,{error:'database error'});
+    new Users({ 
+      'name': name,
+      'email': email,
+      'password': hash,
+      'role': userRoles.user
+    }).save(function(err,user){
+      if (err) return res.send(400,{error:'user already exists'});
+      console.log('After Save');
+      req.login(user, function(err){
+        console.log("after login");
+        console.log(user);
+        console.log(err);
+        if (err) {
+          console.log("HOW IS THIS BEING SENT");
+          return res.send(400,{error:'Login error'});
+        }
+        console.log("aftter err");
+        res.json(_.pick(user,'role','email','name','_id'));
+      });
     });
   });
 });

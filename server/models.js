@@ -14,20 +14,17 @@ var UserSchema = new Schema({
   currentTable: {type: Schema.Types.ObjectId, ref: 'Table'}
 });
 
-UserSchema.pre("save",function(next, done) {
-  console.log("PRE");
+UserSchema.pre("save",function(next) {
   var self = this;
-  mongoose.models["Users"].findOne({email : self.email},function(err, results) {
+  exports.Users.findOne({email : self.email},function(err, results) {
     if(err) {
-      done(err);
+      next(err);
     } else if(results) { //there was a result found, so the email address exists
-      self.invalidate("email","email must be unique");
-      done(new Error("email must be unique"));
+      next(new Error("email must be unique"));
     } else {
-      done();
+      next();
     }
   });
-  next();
 });
 
 /** TRANSACTION **/

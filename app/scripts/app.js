@@ -76,7 +76,7 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
     };
     function error(response){
       if(response.status === 401){
-        $location.path('/signin');
+        $location.path('#/signin');
         return $q.reject(response);
       } else {
         return $q.reject(response);
@@ -93,7 +93,7 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
 app.run(['$rootScope','$location','Auth',function($rootScope,$location,Auth){
   $rootScope.$on('$routeChangeStart', function(event, next, current){
     if (!Auth.authorize(next.access)){
-      $location.path('/signin');
+      $location.path('#/signin');
     }
   });
 }]);
