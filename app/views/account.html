@@ -2,24 +2,27 @@
 
   <h1 style="margin-bottom:20px;">Account Settings</h1>
 
-  <form class="form-horizontal" name="EditTable" ng-submit="save()">
+  <form class="form-horizontal" name="account" ng-submit="save()" novalidate>
     <div class="control-group">
       <label class="control-label" for="name">Name:</label>
       <div class="controls">
-        <input type="text" id="name" ng-model="form.name">
+        <input type="text" id="name" ng-model="form.name" required>
       </div>
     </div>
   
     <div class="control-group">
       <label class="control-label" for="email">Email:</label>
       <div class="controls">
-        <input type="text" id="email" ng-model="form.email">
+        <input type="email" id="email" ng-model="form.email" required>
       </div>
     </div>
     <div class="controls">
-      <button type="submit" class="btn btn-success">Submit</button>
+      <button ng-disabled="!account.$valid" type="submit" class="btn btn-success">Submit</button>
       <a class="btn btn-warning" ng-href="#/manage">Cancel</a>
     </div>
   </form>
+  <p class="red" style="text-align:center;" ng-show="emailerror">
+    Accout with this email already exists
+  </p>
 
 </div>

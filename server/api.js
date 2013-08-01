@@ -30,10 +30,18 @@ module.exports = function(app){
   app.post('/api/update_account', function(req,res){
     var name = req.body.name || req.user.name;
     var email = req.body.email || req.user.email;
+    console.log(name);
+    console.log(email);
     Users
-      .findByIdAndUpdate(req.user._id, {email:email, name:name},function(err,user){
-        if (err) res.send(500,{error:'database error'});
-        res.json(_.pick(user,'name','role','email','currentTable','_id'));
+      .findById(req.user._id)
+      .exec(function(err,user){
+        if (err) return res.send(500,{error:'database error'});
+        user.name = name;
+        user.email = email;
+        user.save(function(err){
+          if (err) return res.send(400,{error:"user already exists"});
+          res.json(_.pick(user,'name','role','email','currentTable','_id'));
+        });
       });
   });
 

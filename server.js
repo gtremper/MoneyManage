@@ -115,24 +115,18 @@ app.post('/login', function(req, res, next) {
 
 app.post('/register', function(req,res){
   var b = req.body;
-  Users.findOne({'email':b.email}, function(err, user){
-    if (err) res.send(500,{error:'database error'});
-    if(user){
-      return res.send(400,{error:"user already exists"});
-    }
-    new Users({
-      name: b.name,
-      email: b.email,
-      password: b.password,
-      role: userRoles.user,
-    }).save(function(err,user){
-      if (err) return res.send(500,{error:'database error'});
-      req.login(user,function(err){
-        if (err) return res.send(500,{error:'authentication error'});
-        res.json({'role': user.role, 'email':user.email, 'name':user.name});
-      });
+  new Users({
+    name: b.name,
+    email: b.email,
+    password: b.password,
+    role: userRoles.user,
+  }).save(function(err,user){
+    if (err) return res.send(400,{error:'user already exists'});
+    req.login(user,function(err){
+      if (err) return res.send(500,{error:'authentication error'});
+      res.json({'role': user.role, 'email':user.email, 'name':user.name});
     });
-  })
+  });
 });
 
 app.post('/logout', function(req, res){
