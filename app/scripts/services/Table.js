@@ -14,6 +14,7 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
 
   function getTables(callback){
     console.log("GET TABLES");
+    promise = $q.defer();
     $http.get('/api/get_tables').success(function(data){
       console.log("got tables..");
       _.each(_.keys(tables), function(table){
