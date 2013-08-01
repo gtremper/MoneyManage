@@ -27,6 +27,16 @@ module.exports = function(app){
   /** Need to be logged in **/
   app.all('/api/*',ensureAuthenticated);
 
+  app.post('/api/update_account', function(req,res){
+    var name = req.body.name || req.user.name;
+    var email = req.body.email || req.user.email;
+    Users
+      .findByIdAndUpdate(req.user._id, {email:email, name:name},function(err,user){
+        if (err) res.send(500,{error:'database error'});
+        res.json(_.pick(user,'name','role','email','currentTable','_id'));
+      });
+  });
+
   app.get('/api/get_tables', function(req,res){
     Tables
       .where('_id').in(req.user.tables)
@@ -102,21 +112,21 @@ module.exports = function(app){
   app.post('/api/delete_table',function(req,res){
     var table_id = req.body.table_id;
     Tables
-      .findById(b.table_id,
+      .findById(table_id,
       function(err,table){
         if (err) return res.send(500,{error:'database error'});
         if (!table) return res.send(400,{error:'table not found'});
-        
         Users.update({_id:{$in: table.members}},
           {$pull: {tables: table_id}},
           {multi:true},
           function(err,num){
             if (err) return res.send(500,err);
+            res.send(200);
           });
 
         table.remove(function(err){
           if (err) return res.send(500,{error:'database error'});
-        })
+        });
       });
   });
 

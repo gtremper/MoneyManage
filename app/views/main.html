@@ -21,7 +21,7 @@
               </li>
             </ul>
             <div ng-hide="getItems(person).length" style="margin-bottom:10px;">
-              No transactions
+              No payments
             </div>
             <button class="btn btn-primary" ng-click="changeTab('add','view-right');setCurrentUser(person)">Add</button>
           </td>
@@ -31,7 +31,7 @@
   </div>
   <div ng-switch-when="add" class="addTransaction tab-pane">
 
-    <h1>Add Transaction</h1>
+    <h1>Add Payment</h1>
     <form class="form-horizontal" ng-submit="addItem(currentUser)" style="margin-top:20px;">
       <div class="control-group">
         <label class="control-label" for="title">Title:</label>

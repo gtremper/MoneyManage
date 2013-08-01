@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('EditTableCtrl', ['$scope','$routeParams','Table',function ($scope,$routeParams,Table) {
+app.controller('EditTableCtrl', ['$scope','$routeParams','$location','Table',function ($scope,$routeParams,$location,Table) {
 
   Table.getAllTables().then(function(tables){
     var table = tables[$routeParams.id];
@@ -10,8 +10,21 @@ app.controller('EditTableCtrl', ['$scope','$routeParams','Table',function ($scop
     $scope.form.title = table.title;
 
     $scope.save = function(){
-      Table.editTable($scope.form.title,$scope.form.emails,$routeParams.id);
+      Table.editTable($scope.form.title,$scope.form.emails,$routeParams.id)
+      .then(function(){
+        $location.path('#/manage');
+      });
+    };
+
+    $scope.delete = function(){
+      Table.deleteTable($routeParams.id).then(function(){
+        $location.path('#/manage');
+      },
+      function(){
+        console.log("Error in controller");
+      });
     }
+
   })
 
 }]);

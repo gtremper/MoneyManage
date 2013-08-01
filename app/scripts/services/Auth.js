@@ -47,6 +47,20 @@ app.factory('Auth',['$rootScope','$http','$cookieStore','$location','userRoles',
         }
       }).error(error);
     },
+    updateAccount: function(name,email){
+      var body = {
+        name: name,
+        email: email
+      };
+      return $http.post('/api/update_account',body)
+      .then(function(resp){
+        $rootScope.user = resp.data;
+        console.log("success!");
+      },
+      function(){
+        console.log("Account update error");
+      });
+    },
     accessLevels: accessLevels,
     userRoles: userRoles
   };

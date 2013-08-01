@@ -51,7 +51,7 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
       $http.post('/api/set_current_table',{table_id: table._id}).success(function(){
         console.log("set current table")
         getTables(function(){
-          $location.path('/manage');
+          $location.path('#/manage');
         });
       });
     })
@@ -63,13 +63,16 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
 
   Table.getTable = function(){
     return promise.promise.then(function(){
+      var curTable = $rootScope.user.currentTable;
       var tbl_id;
-      if ($rootScope.user.currentTable){
-        tbl_id = $rootScope.user.currentTable;
-      } else {
-        console.log('default get table');
+      if(curTable && _.contains(_.keys(tables), curTable)){
+        tbl_id = curTable;
+      } else if (!_.isEmpty(tables)){
         tbl_id = _.keys(tables)[0];
         $rootScope.user.currentTable = tbl_id;
+      } else {
+        $location.path('#/manage');
+        return;
       }
 
       $http.post('/api/set_current_table',{table_id: tbl_id})
@@ -101,7 +104,7 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
     return $http.post('/api/edit_table',body)
     .then(function(resp){
       tables[id] = resp.data;
-      $location.path('/manage');
+      $location.path('#/manage');
     },
     function(resp){
       console.log('ERROR ADDING MEMBER');
@@ -112,8 +115,10 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
   Table.deleteTable = function(id){
     return $http.post('/api/delete_table',{table_id: id})
     .then(function(resp){
-      tables[id] = resp.data;
-      $location.path('/manage');
+      delete tables[id];
+      $rootScope.user.tables = _.reject($rootScope.user.tables,function(table){
+        return table === id;
+      });
     },
     function(resp){
       console.log('ERROR ADDING MEMBER');

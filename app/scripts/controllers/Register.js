@@ -9,7 +9,7 @@ app.controller('RegisterCtrl', ['$scope','$location','Auth',function ($scope,$lo
       name: $scope.name
     },
     function(res){
-      $location.path('/manage');
+      $location.path('/#manage');
     },
     function(data,status,headers,config){
       console.log("error");

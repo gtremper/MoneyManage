@@ -1,4 +1,4 @@
-<h1>Edit Table</h1>
+<h1>Edit Group</h1>
 
 <form class="form-horizontal" name="EditTable">
   <div class="control-group">
@@ -16,10 +16,12 @@
         <li ng-repeat="member in old_members">{{member.email}}</li>
         <li ng-repeat="email in form.emails">{{email}}</li>
       </ul>
-      <textarea id="emails" ng-model="form.emails" name="emails" ng-list>
+      <textarea id="emails" ng-model="form.emails" name="emails" placeholder="Enter a comma seperated list of emails" ng-list>
       </textarea>
     </div>
   </div>
-  <button class="btn" ng-click="save()">Submit</button>
+  <a class="btn btn-warning" ng-href="#/manage">Cancel</a>
+  <button class="btn btn-success" ng-click="save()">Submit</button>
+  <button class="btn btn-danger" ng-click="delete()">Delete</button>
 </form>
 
