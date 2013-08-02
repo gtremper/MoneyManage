@@ -64,7 +64,7 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
       access: accessLevels.user
     })
     .otherwise({
-      redirectTo: '/manage'
+      redirectTo: '/home'
     });
 
 

@@ -59,10 +59,7 @@ passport.use(new LocalStrategy({
     // email, or the password is not correct, set the user to `false` to
     // indicate failure and set a flash message.  Otherwise, return the
     // authenticated `user`.
-    console.log("pre find")
     Users.findOne({'email':email}, function(err, user) {
-      console.log("Strategy error");
-      console.log(err);
       if (err) { return done(err); }
       if (!user) { return done(null, false, { error: 'user doesnt exist'}); }
 

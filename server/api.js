@@ -84,7 +84,20 @@ module.exports = function(app){
     });
   });
 
-  app.post('/api/edit_table', function(req,res){
+  /* middleware to ensure table ownership */
+  function ensureOwnership(req,res,next){
+    var id = req.body.table_id;
+    Tables.findById(id,function(err,table){
+      if (err) return res.send(500,{error: "database error"});
+      if (table.members.indexOf(req.user._id) !== -1){
+        return next();
+      } else {
+        return res.send(400, {error:"You don't have access to this document"})
+      }
+    });
+  }
+
+  app.post('/api/edit_table',ensureOwnership, function(req,res){
     var title = req.body.title;
     var new_members = req.body.new_members;
     var table_id = req.body.table_id;
@@ -115,7 +128,7 @@ module.exports = function(app){
     }
   })
 
-  app.post('/api/delete_table',function(req,res){
+  app.post('/api/delete_table',ensureOwnership, function(req,res){
     var table_id = req.body.table_id;
     Tables
       .findById(table_id,
@@ -137,7 +150,7 @@ module.exports = function(app){
   });
 
   /* Body needs "email" and "table_id */
-  app.post('/api/add_member',function(req,res){
+  app.post('/api/add_member',ensureOwnership, function(req,res){
     var b = req.body;
     Users
       .findOne({email: b.email})
@@ -159,7 +172,7 @@ module.exports = function(app){
   });
 
   /* Body needs "table_id" and "transaction" */
-  app.post('/api/add_transaction',function(req,res){
+  app.post('/api/add_transaction',ensureOwnership, function(req,res){
     var b = req.body;
     b.transaction.owner = req.user._id;
     Tables
@@ -174,7 +187,7 @@ module.exports = function(app){
   });
 
   /* Body needs "table_id" and "transaction" */
-  app.post('/api/edit_transaction',function(req,res){
+  app.post('/api/edit_transaction',ensureOwnership,function(req,res){
     var b = req.body;
     Tables
       .findById(b.table_id,
@@ -191,7 +204,7 @@ module.exports = function(app){
   });
 
   /* Body needs "table_id" and "trans_id" */
-  app.post('/api/delete_transaction',function(req,res){
+  app.post('/api/delete_transaction',ensureOwnership,function(req,res){
     var b = req.body;
     Tables
       .findById(b.table_id,
@@ -216,9 +229,6 @@ module.exports = function(app){
   });
 
   /** Need to be admin **/
-  app.all('/api/*',ensureAdmin);
+  app.all('/api/admin/*',ensureAdmin);
 
-  app.get('/api/testadmin', function(req,res){
-    res.json({name: 'only admins can see'});
-  });
 }
