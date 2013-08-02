@@ -1,39 +1,46 @@
-<h1 style="position:relative;">
-  Settle Balance <small>{{table.title}}</small>
-  <a class="btn btn-warning" href="#/home" style="position:absolute;left:0px;bottom:-50px;">
-    Back
-  </a>
-</h1>
-
-<div style="width:600px;margin:20px auto;">
-  <h3 ng-show="give.length">Give...</h3>
-  <ul ng-show="give.length" style="margin-bottom:20px;">
-    <li ng-repeat="member in give">
-      <span class="green bullet">{{member.amount|currency}}</span> to {{member.name}}
-    </li>
-  </ul>
-  <h3 ng-show="get.length">Get...</h3>
-  <ul ng-show="get.length" style="margin-bottom:20px;">
-    <li ng-repeat="member in get">
-      <span class="green bullet">{{member.amount|currency}}</span> from {{member.name}}
-    </li>
-  </ul>
-  <h3>You receive...</h3>
-  <h2 style="margin-left:25px;">{{myBalance | currency}}</h2>
+<div style="width:600px;margin:0 auto;">
+  <h1 style="position:relative;">
+    Settle Balance <small>{{table.title}}</small>
+    <a class="btn btn-warning" href="#/home" style="position:absolute;left:0px;bottom:-50px;">
+      Back
+    </a>
+  </h1>
+  
+  <div class="balance_container">
+    <h3 ng-show="give.length">Give...</h3>
+    <ul ng-show="give.length" style="margin-bottom:20px;">
+      <li ng-repeat="member in give | orderBy:'amount':true">
+        <span class="green bullet">{{member.amount|currency}}</span> to {{member.name}}
+      </li>
+    </ul>
+    <h3 ng-show="get.length">Get...</h3>
+    <ul ng-show="get.length" style="margin-bottom:20px;">
+      <li ng-repeat="member in get | orderBy:'amount'">
+        <span class="green bullet">{{member.amount|currency}}</span> from {{member.name}}
+      </li>
+    </ul>
+    <h3 ng-show="myBalance>0">You receive...</h3>
+    <h3 ng-show="myBalance<0">You owe...</h3>
+    <h2 style="margin-left:25px;">{{abs(myBalance) | currency}}</h2>
+  </div>
 </div>
 
 
 
 
 <style type="text/css">
-ul{
+.balance_container{
+  margin-left:150px;
+  margin-top: 20px;
+}
+.balance_container ul{
   list-style-type: none;
   font-size: 24px;
 }
-ul li{
+.balance_container ul li{
   line-height: 32px;
 }
-.bullet{
+.balance_container .bullet{
   display: inline-block;
   margin-right: 10px;
 }

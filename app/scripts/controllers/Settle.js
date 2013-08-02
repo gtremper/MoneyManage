@@ -21,6 +21,13 @@ app.controller('SettleCtrl', ['$rootScope','$scope','$routeParams','Table',funct
     $scope.get = [];
     $scope.give = [];
 
+    $scope.abs = function(num){
+      if(num<0){
+        num = -num;
+      }
+      return num;
+    }
+
     $scope.myBalance = getBalance($rootScope.user);
 
     angular.forEach($scope.table.members, function(member){
