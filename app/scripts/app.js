@@ -22,13 +22,6 @@ var app = angular.module('MoneyManageApp', ['ui','ui.bootstrap','ngCookies']);
 
 app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels', function ($routeProvider,$locationProvider,$httpProvider,accessLevels) {
   $routeProvider
-    /*
-    .when('/', {
-      templateUrl: 'views/main.html',
-      controller: 'MainCtrl',
-      access: accessLevels.user
-    })
-    */
     .when('/signin',{
       templateUrl: 'views/signin.html',
       controller: 'SigninCtrl',
@@ -65,6 +58,11 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
       controller: 'AccountCtrl',
       access: accessLevels.user
     })
+    .when('/settle/:id',{
+      templateUrl: 'views/settle.html',
+      controller: 'SettleCtrl',
+      access: accessLevels.user
+    })
     .otherwise({
       redirectTo: '/manage'
     });
@@ -76,7 +74,7 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
     };
     function error(response){
       if(response.status === 401){
-        $location.path('#/signin');
+        $location.path('/signin');
         return $q.reject(response);
       } else {
         return $q.reject(response);
@@ -93,7 +91,7 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
 app.run(['$rootScope','$location','Auth',function($rootScope,$location,Auth){
   $rootScope.$on('$routeChangeStart', function(event, next, current){
     if (!Auth.authorize(next.access)){
-      $location.path('#/signin');
+      $location.path('/signin');
     }
   });
 }]);

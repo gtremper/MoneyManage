@@ -12,7 +12,7 @@ app.controller('RegisterCtrl', ['$scope','$location','$timeout','Auth',function 
       name: $scope.newuser.name
     },
     function(res){
-      $location.path('/#manage');
+      $location.path('/manage');
     },
     function(data){
       console.log(data);

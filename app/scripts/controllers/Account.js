@@ -9,7 +9,7 @@ app.controller('AccountCtrl',['$scope','$rootScope','$location','$timeout','Auth
   $scope.save = function(){
     Auth.updateAccount($scope.form.name, $scope.form.email)
     .then(function(resp){
-      $location.path('#/manage');
+      $location.path('/manage');
     },
     function(resp){
       $scope.form.email = "";

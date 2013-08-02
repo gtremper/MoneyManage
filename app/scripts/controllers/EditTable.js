@@ -12,18 +12,21 @@ app.controller('EditTableCtrl', ['$scope','$routeParams','$location','Table',fun
     $scope.save = function(){
       Table.editTable($scope.form.title,$scope.form.emails,$routeParams.id)
       .then(function(){
-        $location.path('#/manage');
+        $location.path('/manage');
       });
     };
 
     $scope.delete = function(){
-      Table.deleteTable($routeParams.id).then(function(){
-        $location.path('#/manage');
-      },
-      function(){
-        console.log("Error in controller");
-      });
-    }
+      if (confirm('Are you sure you want to delete this table?')){
+        console.log("ASDFASDF");
+        Table.deleteTable($routeParams.id).then(function(){
+          $location.path('/manage');
+        },
+        function(){
+          console.log("Error in controller");
+        });
+      }
+    };
 
   })
 

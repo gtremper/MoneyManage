@@ -13,7 +13,7 @@ app.controller('SigninCtrl', ['$scope','$location','$timeout','Auth',function ($
       rememberme: $scope.login.rememberme
     },
     function(res){
-      $location.path('#/home');
+      $location.path('/home');
     },
     function(data){
       console.log(data);

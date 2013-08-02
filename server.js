@@ -129,16 +129,8 @@ app.post('/register', function(req,res){
       'role': userRoles.user
     }).save(function(err,user){
       if (err) return res.send(400,{error:'user already exists'});
-      console.log('After Save');
       req.login(user, function(err){
-        console.log("after login");
-        console.log(user);
-        console.log(err);
-        if (err) {
-          console.log("HOW IS THIS BEING SENT");
-          return res.send(400,{error:'Login error'});
-        }
-        console.log("aftter err");
+        if (err) return res.send(400,{error:'Login error'});
         res.json(_.pick(user,'role','email','name','_id'));
       });
     });

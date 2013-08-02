@@ -1,0 +1,40 @@
+<h1 style="position:relative;">
+  Settle Balance <small>{{table.title}}</small>
+  <a class="btn btn-warning" href="#/home" style="position:absolute;left:0px;bottom:-50px;">
+    Back
+  </a>
+</h1>
+
+<div style="width:600px;margin:20px auto;">
+  <h3 ng-show="give.length">Give...</h3>
+  <ul ng-show="give.length" style="margin-bottom:20px;">
+    <li ng-repeat="member in give">
+      <span class="green bullet">{{member.amount|currency}}</span> to {{member.name}}
+    </li>
+  </ul>
+  <h3 ng-show="get.length">Get...</h3>
+  <ul ng-show="get.length" style="margin-bottom:20px;">
+    <li ng-repeat="member in get">
+      <span class="green bullet">{{member.amount|currency}}</span> from {{member.name}}
+    </li>
+  </ul>
+  <h3>You receive...</h3>
+  <h2 style="margin-left:25px;">{{myBalance | currency}}</h2>
+</div>
+
+
+
+
+<style type="text/css">
+ul{
+  list-style-type: none;
+  font-size: 24px;
+}
+ul li{
+  line-height: 32px;
+}
+.bullet{
+  display: inline-block;
+  margin-right: 10px;
+}
+</style>

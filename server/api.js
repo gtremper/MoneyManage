@@ -88,9 +88,8 @@ module.exports = function(app){
     var title = req.body.title;
     var new_members = req.body.new_members;
     var table_id = req.body.table_id;
-    console.log(req.body);
-
-    if (!new_members){
+    if (_.isEmpty(new_members)){
+      console.log('no members');
       Tables
         .findByIdAndUpdate(table_id,{title:title},function(err,table){
           if (err) return res.send(500,err);
@@ -101,7 +100,6 @@ module.exports = function(app){
         .where('email').in(new_members)
         .select('_id')
         .exec(function(err, ids){
-          console.log(ids);
           if (err) return res.send(500,err);
           Tables.findByIdAndUpdate(table_id, {$addToSet: {members: {$each: ids}}, title:title}, function(err, tbl){
             if(err) return res.send(500,{error:'database error'});

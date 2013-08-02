@@ -110,7 +110,7 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
   $scope.save = function(){
     Table.editTransaction($scope.currentTrans)
     .then(function(data){
-      $scope.changeTab('home','view-right');
+      //$scope.changeTab('home','view-right');
     },
     function(data){
       console.log("edit eerrro");
