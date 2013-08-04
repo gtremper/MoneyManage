@@ -8,16 +8,16 @@ app.controller('AccountCtrl',['$scope','$rootScope','$location','$timeout','Auth
 
   $scope.save = function(){
     Auth.updateAccount($scope.form.name, $scope.form.email)
-    .then(function(resp){
+    .then(function(){
       $location.path('/manage');
     },
-    function(resp){
-      $scope.form.email = "";
+    function(){
+      $scope.form.email = '';
       $scope.emailerror = true;
       $timeout(function(){
-         $scope.emailerror = false;
+        $scope.emailerror = false;
       },3000);
     });
-  }
+  };
 
 }]);

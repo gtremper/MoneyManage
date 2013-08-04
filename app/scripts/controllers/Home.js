@@ -3,17 +3,17 @@
 app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$scope,Table) {
 
   $scope.table = {
-    title: "Loading...",
+    title: 'Loading...',
     members: {},
     transactions: []
-  }
+  };
   
   Table.getTable().then(function(table){
     $scope.table = table;
     console.log(table);
 
     /* Add stuff */
-    !function(){
+    (function(){
       $scope.new = {};
       var checkboxes = _.keys($scope.table.members);
       checkboxes.push($rootScope.user._id);
@@ -29,10 +29,10 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
           checkboxes.splice(index,1);
         }
         console.log($scope.checkboxes);
-      }
+      };
   
       $scope.addItem = function(){
-        console.log("Add Item");
+        console.log('Add Item');
         var title = $scope.new.title;
         var description = $scope.new.description;
         var amount = $scope.new.amount;
@@ -42,16 +42,16 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
         Table.addTransaction(checkboxes,title,description,amount)
         .then(function(data){
           $scope.changeTab('home','view-left');
-          $scope.new.title = "";
-          $scope.new.description = "";
+          $scope.new.title = '';
+          $scope.new.description = '';
           $scope.new.amount = 0;
           checkboxes = allSelected.slice(0);
         },
         function(data){
-          console.log("transaction eerrro");
+          console.log('transaction eerrro');
         });
-      }
-    }();
+      };
+    })();
 
 
   });
@@ -62,27 +62,27 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
       if (trans.owner === person._id){
         amt += trans.amount;
       }
-    })
+    });
     return amt;
-  }
+  };
   
   $scope.allTotal = function(){
     var amt = 0;
     angular.forEach($scope.table.transactions,function(trans){
       amt += trans.amount;
-    })
+    });
     return amt;
-  }
+  };
   
   $scope.getItems = function(person){
-    var items = []
+    var items = [];
     angular.forEach($scope.table.transactions,function(trans){
       if (trans.owner === person._id){
         items.push(trans);
       }
     });
     return items;
-  }
+  };
   
   $scope.getBalance =function(person){
     var due = 0;
@@ -92,7 +92,7 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
       }
     });
     return $scope.personalTotal(person) - due;
-  }
+  };
   
   /* View Stuff */
   
@@ -104,8 +104,8 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
     } else {
       split.splice(split.indexOf(id), 1);
     }
-    console.log(split)
-  }
+    console.log(split);
+  };
 
   $scope.save = function(){
     Table.editTransaction($scope.currentTrans)
@@ -113,19 +113,21 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
       //$scope.changeTab('home','view-right');
     },
     function(data){
-      console.log("edit eerrro");
+      console.log('edit eerrro');
     });
-  }
+  };
   
   $scope.delete = function(){
-    Table.deleteTransaction($scope.currentTrans._id)
-    .then(function(data){
-      $scope.changeTab('home','view-right');
-    },
-    function(data){
-      console.log("delete eerrro");
-    });
-  }
+    if (confirm('Are you sure you want to delete this transaction?')){
+      Table.deleteTransaction($scope.currentTrans._id)
+      .then(function(data){
+        $scope.changeTab('home','view-right');
+      },
+      function(data){
+        console.log('delete eerrro');
+      });
+    }
+  };
 
   /** Animations **/
   $scope.tab = '';
@@ -141,6 +143,6 @@ app.controller('HomeCtrl', ['$rootScope','$scope','Table',function ($rootScope,$
       $scope.anim_dir = anim;
     }
     $scope.tab = change;
-  }
+  };
 }]);
 

@@ -3,7 +3,7 @@
 var app = angular.module('MoneyManageApp', ['ui','ui.bootstrap','ngCookies']);
 
 /* Authentication constants */
-!function(app){
+(function(app){
   var userRoles = {
     public: 1, // 001
     user:   2, // 010
@@ -18,7 +18,7 @@ var app = angular.module('MoneyManageApp', ['ui','ui.bootstrap','ngCookies']);
     user:   userRoles.user | userRoles.admin,                    // 110
     admin:  userRoles.admin                                      // 100
   });
-}(app);
+}(app));
 
 app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels', function ($routeProvider,$locationProvider,$httpProvider,accessLevels) {
   $routeProvider
@@ -68,12 +68,13 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
     });
 
 
-  $httpProvider.responseInterceptors.push(['$location','$q',function($location,$q){
+  $httpProvider.responseInterceptors.push(['$rootScope','$location','$q','userRoles',function($rootScope,$location,$q,userRoles){
     function success(response){
       return response;
     };
     function error(response){
       if(response.status === 401){
+        $rootScope.user = {email: '', role: userRoles.public};
         $location.path('/signin');
         return $q.reject(response);
       } else {
@@ -89,7 +90,7 @@ app.config(['$routeProvider','$locationProvider','$httpProvider','accessLevels',
 
 
 app.run(['$rootScope','$location','Auth',function($rootScope,$location,Auth){
-  $rootScope.$on('$routeChangeStart', function(event, next, current){
+  $rootScope.$on('$routeChangeStart', function(event, next){
     if (!Auth.authorize(next.access)){
       $location.path('/signin');
     }

@@ -1,8 +1,8 @@
 <div style="width:600px;margin:0 auto;">
   <h1 style="position:relative;">
     Settle Balance <small>{{table.title}}</small>
-    <a class="btn btn-warning" href="#/home" style="position:absolute;left:0px;bottom:-50px;">
-      Back
+    <a class="btn btn-primary" href="#/home" style="position:absolute;left:-100px;bottom:2px;">
+      <i class='icon-white icon-circle-arrow-left'></i> Back
     </a>
   </h1>
   
@@ -19,9 +19,6 @@
         <span class="green bullet">{{member.amount|currency}}</span> from {{member.name}}
       </li>
     </ul>
-    <h3 ng-show="myBalance>=0">You receive...</h3>
-    <h3 ng-show="myBalance<0">You owe...</h3>
-    <h2 style="margin-left:25px;">{{abs(myBalance) | currency}}</h2>
   </div>
 </div>
 

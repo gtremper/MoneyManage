@@ -57,30 +57,46 @@ module.exports = function(app){
 
   /* Body needs "emails" and "title" */
   app.post('/api/create_table',function(req,res){
-    var b = req.body;
+    var emails = req.body.emails;
+    var title = req.body.title;
+    console.log(emails)
     new Tables({
-      title: b.title,
+      title: title,
       members: [],
       transactions: [],
       prevTables: []
     }).save(function(err,table){
       if (err) return res.send(500,{error:'database error'});
       Users
-        .where('email').in(b.emails)
+        .where('email').in(emails)
         .select('_id')
         .exec(function(err, ids){
+          console.log(ids);
           if (err) return res.send(500,err);
           Tables.findByIdAndUpdate(table._id, {members: ids}, function(err, tbl){
             if(err) return res.send(500,{error:'database error'});
             return res.json(tbl);
           });
         });
-      Users.update({email:{$in: b.emails}},
+      Users.update({email:{$in: emails}},
         {$addToSet: {tables: table._id}},
         {multi:true},
         function(err,num){
           if (err) return res.send(500,err);
         });
+    });
+  });
+
+  app.post('/api/check_email', function(req,res){
+    var email = req.body.email;
+    Users.findOne({email: email}, function(err, user){
+      if (err) return res.send(500,{error: 'database error'});
+      console.log(user);
+      if (user) {
+        res.json(_.pick(user,'email','name'));
+      } else {
+        res.send(400,{error: "user doesn't exist"});
+      }
     });
   });
 
@@ -92,7 +108,7 @@ module.exports = function(app){
       if (table.members.indexOf(req.user._id) !== -1){
         return next();
       } else {
-        return res.send(400, {error:"You don't have access to this document"})
+        return res.send(401, {error:"You don't have access to this document"})
       }
     });
   }

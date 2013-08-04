@@ -26,9 +26,11 @@
               </li>
             </ul>
             <div ng-hide="getItems(user).length" style="margin-bottom:10px;">
-              No transactions
+              No payments
             </div>
-            <button class="btn btn-primary" ng-click="changeTab('add','view-right')">Add</button>
+            <button class="btn btn-success" ng-click="changeTab('add','view-right')">
+              <i class="icon-white icon-plus"></i> Add
+            </button>
           </td>
           <td ng-repeat="member in table.members">
             <ul ng-show="getItems(member).length">
@@ -38,7 +40,7 @@
               </li>
             </ul>
             <div ng-hide="getItems(member).length" style="margin-bottom:10px;">
-              No transactions
+              No payments
             </div>
           </td>
         </tr>
@@ -50,7 +52,7 @@
   </div>
   <div ng-switch-when="add" class="addTransaction tab-pane">
     <div style="width:700px;margin:0 auto;">
-      <h1>Add Transaction</h1>
+      <h1>Add Payment</h1>
       <form novalidate class="form-horizontal" name="AddTransaction" style="margin-top:20px;" ng-submit="addItem()">
         <div class="control-group">
           <label class="control-label" for="title">Title:</label>
@@ -92,7 +94,7 @@
 
     <div class="pull-right" ng-init="edit=false">
       <div>
-        <button class="btn" ng-hide="edit || (currentTrans.owner !== user._id)" ng-click="edit=true">Edit</button>
+        <button class="btn btn-primary" ng-hide="edit || (currentTrans.owner !== user._id)" ng-click="edit=true"><i class='icon-white icon-pencil'></i> Edit</button>
       </div>
       <div class="well" ng-show="edit">
         <form novalidate name="view">
@@ -107,7 +109,7 @@
           </label>
         </form>
         <div>
-          <button class="btn btn-primary" ng-click="edit=false;save()" ng-disabled="!view.$valid || !currentTrans.split.length">Save</button>
+          <button class="btn btn-success" ng-click="edit=false;save()" ng-disabled="!view.$valid || !currentTrans.split.length">Save</button>
           <button class="btn btn-danger pull-right" ng-click="delete()">Delete</button>
         </div>
       </div>
@@ -123,6 +125,6 @@
         </li>
       </ul>
     </div>
-    <button class="btn" ng-click="changeTab('','view-right')">Back</button>
+    <button class="btn btn-primary" ng-click="changeTab('','view-right')"><i class='icon-white  icon-circle-arrow-left'></i> Back</button>
   </div>
 </div>

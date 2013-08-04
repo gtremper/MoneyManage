@@ -1,27 +1,32 @@
 <div style="width:550px; margin: 0 auto;">
   <h1 style="margin-bottom:20px;">New Group</h1>
-  <form class="form-horizontal" ng-submit="createTable()" name="newgroup">
-    <div class="control-group">
+  <div class="form-horizontal">
+    <form class="control-group" name="groupname" novalidate>
       <label class="control-label" for="title">Title:</label>
       <div class="controls">
         <input type="text" id="title" placeholder="Enter title" ng-model="group.title" name="title" required>
       </div>
-    </div>
+    </form>
   
     <div class="control-group">
       <label class="control-label" for="emails">Members:</label>
       <div class="controls">
-        <ul>
-          <li>{{user.email}}</li>
-          <li ng-repeat="email in group.emails">{{email}}</li>
+        <ul class="unstyled">
+          <li ng-repeat="member in members">
+             <a ng-hide="$first" ng-click="removeMember(member)"><i class="icon-remove"></i></a> {{member}}
+          </li>
         </ul>
-        <textarea id="emails" ng-model="group.emails" placeholder="Enter a comma seperated list of emails" ng-list name="emails">
-        </textarea>
+        <form ng-submit="addMember()" novalidate name="memberEmail" style="position:relative">
+          <input type="email" ng-model="newMemberEmail" placeholder="New member email" required/>
+          <input class="btn btn-small btn-primary" type="submit" value="add" ng-disabled="!memberEmail.$valid"/>
+          <div ng-show="timeouts" class="red" style="position:absolute; bottom:-25px;">
+            {{errorMsg}}
+          </div>
+        </form>
       </div>
     </div>
     <div class="controls">
-      <button ng-disabled="!newgroup.$valid" type="submit" class="btn btn-success">Submit</button>
       <a class="btn btn-warning" ng-href="#/manage">Cancel</a>
     </div>
-  </form>
+  </div>
 </div>
