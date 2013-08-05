@@ -61,7 +61,9 @@ passport.use(new LocalStrategy({
     // authenticated `user`.
     Users.findOne({'email':email}, function(err, user) {
       if (err) { return done(err); }
-      if (!user) { return done(null, false, { error: 'user doesnt exist'}); }
+      if (!user || user.password==='!') { 
+        return done(null, false, { error: 'user doesnt exist'});
+      }
 
       bcrypt.compare(password, user.password, function(err, match){
         if (err) return done(err);
@@ -118,18 +120,38 @@ app.post('/register', function(req,res){
   var email = req.body.email;
   var password = req.body.password;
   bcrypt.hash(password, 10, function(err, hash){
-    if (err) return res.send(500,{error:'database error'});
-    new Users({ 
-      'name': name,
-      'email': email,
-      'password': hash,
-      'role': userRoles.user
-    }).save(function(err,user){
-      if (err) return res.send(400,{error:'user already exists'});
-      req.login(user, function(err){
-        if (err) return res.send(400,{error:'Login error'});
-        res.json(_.pick(user,'role','email','name','_id'));
-      });
+    if (err) return res.send(500,{error:'hash error'});
+
+    Users.findOne({email:email}, function(err, user){
+      if (err) return res.send(500,{error:'database error'});
+      if (user){
+        if (user.password === '!') { //unregistered user
+          user.name = name;
+          user.password = hash;
+          user.save(function(err,user){
+            if (err) res.send(400,{error:'user save error'});
+            req.login(user, function(err){
+              if (err) return res.send(400,{error:'Login error'});
+              res.json(_.pick(user,'role','email','name','_id'));
+            });
+          });
+        } else {
+          res.send(400,{error:'user already exists'});
+        }
+      } else {
+        new Users({ 
+          'name': name,
+          'email': email,
+          'password': hash,
+          'role': userRoles.user
+        }).save(function(err,user){
+          if (err) return res.send(400,{error:'user already exists'});
+          req.login(user, function(err){
+            if (err) return res.send(400,{error:'Login error'});
+            res.json(_.pick(user,'role','email','name','_id'));
+          });
+        });
+      }
     });
   });
 });

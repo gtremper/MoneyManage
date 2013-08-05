@@ -8,12 +8,13 @@ mongoose.connect('mongodb://localhost/test');
 var UserSchema = new Schema({
   name: {type : String, required : true},
   email: {type : String, required : true, unique: true},
-  password: {type : String, required : true},
+  password: {type : String, required : true}, // A password of '!' means unregistered user
   role: {type : Number, required : true},
   tables: [{type: Schema.Types.ObjectId, ref: 'Table'}],
   currentTable: {type: Schema.Types.ObjectId, ref: 'Table'}
 });
 
+/*
 UserSchema.pre("save",function(next) {
   var self = this;
   exports.Users.findOne({email : self.email},function(err, results) {
@@ -26,6 +27,7 @@ UserSchema.pre("save",function(next) {
     }
   });
 });
+*/
 
 /** TRANSACTION **/
 var TransactionSchema = new Schema({

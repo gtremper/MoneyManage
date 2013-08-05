@@ -13,7 +13,8 @@
       <div class="controls">
         <ul class="unstyled">
           <li ng-repeat="member in members">
-             <a ng-hide="$first" ng-click="removeMember(member)"><i class="icon-remove"></i></a> {{member}}
+             <a ng-hide="$first" ng-click="removeMember(member)"><i class="icon-remove"></i></a>
+             <span ng-class="{red: member.unregistered}">{{member.name}} ({{member.email}})</span>
           </li>
         </ul>
         <form ng-submit="addMember()" novalidate name="memberEmail" style="position:relative">
@@ -26,7 +27,7 @@
       </div>
     </div>
     <div class="controls">
-      <button ng-disabled="!groupname.$valid" class="btn btn-success" ng-click="save()">Create</button>
+      <button ng-disabled="!groupname.$valid" class="btn btn-success" ng-click="save()">Save</button>
       <a class="btn btn-warning" ng-href="#/manage">Cancel</a>
       <a class="btn btn-danger" ng-click="delete()"><i class="icon-white icon-trash"></i> Delete</a>
     </div>

@@ -57,32 +57,22 @@ module.exports = function(app){
 
   /* Body needs "emails" and "title" */
   app.post('/api/create_table',function(req,res){
-    var emails = req.body.emails;
+    var ids = req.body.ids;
     var title = req.body.title;
-    console.log(emails)
+    console.log(ids)
     new Tables({
       title: title,
-      members: [],
+      members: ids,
       transactions: [],
       prevTables: []
     }).save(function(err,table){
       if (err) return res.send(500,{error:'database error'});
-      Users
-        .where('email').in(emails)
-        .select('_id')
-        .exec(function(err, ids){
-          console.log(ids);
-          if (err) return res.send(500,err);
-          Tables.findByIdAndUpdate(table._id, {members: ids}, function(err, tbl){
-            if(err) return res.send(500,{error:'database error'});
-            return res.json(tbl);
-          });
-        });
-      Users.update({email:{$in: emails}},
+      Users.update({_id:{$in: ids}},
         {$addToSet: {tables: table._id}},
         {multi:true},
         function(err,num){
           if (err) return res.send(500,err);
+          res.json(table);
         });
     });
   });
@@ -91,11 +81,23 @@ module.exports = function(app){
     var email = req.body.email;
     Users.findOne({email: email}, function(err, user){
       if (err) return res.send(500,{error: 'database error'});
-      console.log(user);
       if (user) {
-        res.json(_.pick(user,'email','name'));
+        if (user.password === '!'){
+          user.unregistered = true;
+        }
+        res.json(_.pick(user,'email','name','_id','unregistered'));
       } else {
-        res.send(400,{error: "user doesn't exist"});
+        /* User doesn't exist. Create Temp user */
+        new Users({
+          name: email,
+          email: email,
+          password: '!', //unregistered user
+          role: userRoles.user
+        }).save(function(err,user){
+          if (err) res.send(500,{error: 'database error'});
+          user.unregistered = true;
+          res.json(_.pick(user,'email','name','_id','unregistered'));
+        });
       }
     });
   });
@@ -115,34 +117,40 @@ module.exports = function(app){
 
   app.post('/api/edit_table',ensureOwnership, function(req,res){
     var title = req.body.title;
-    var new_members = req.body.new_members;
     var table_id = req.body.table_id;
-    if (_.isEmpty(new_members)){
-      console.log('no members');
-      Tables
-        .findByIdAndUpdate(table_id,{title:title},function(err,table){
-          if (err) return res.send(500,err);
-          res.json(table)
-        });
-    } else {
-      Users
-        .where('email').in(new_members)
-        .select('_id')
-        .exec(function(err, ids){
-          if (err) return res.send(500,err);
-          Tables.findByIdAndUpdate(table_id, {$addToSet: {members: {$each: ids}}, title:title}, function(err, tbl){
-            if(err) return res.send(500,{error:'database error'});
-            return res.json(tbl);
+    var member_ids = req.body.member_ids;
+
+    Tables.findByIdAndUpdate(table_id, {members: member_ids, title:title}, {new:false},function(err, table){
+      if(err) return res.send(500,{error:'database error'});
+
+      var table_members = _.map(table.members,function(mem){
+        return mem.toString();
+      });
+
+      var new_members = _.difference(member_ids, table_members);
+      var removed = _.difference(table_members, member_ids);
+
+
+      if (!_.isEmpty(new_members)){
+        Users.update({_id:{$in: new_members}},
+          {$addToSet: {tables: table_id}},
+          {multi:true},
+          function(err,num){
+            if (err) return res.send(500,err);
           });
-        });
-      Users.update({email:{$in: new_members}},
-        {$addToSet: {tables: table_id}},
-        {multi:true},
-        function(err,num){
-          if (err) return res.send(500,err);
-        });
-    }
-  })
+      }
+
+      if (!_.isEmpty(removed)){
+        Users.update({_id:{$in: removed}},
+          {$pull: {tables: table_id}},
+          {multi:true},
+          function(err,num){
+            if (err) return res.send(500,err);
+          });
+      }
+      res.json(table);
+    });
+  });
 
   app.post('/api/delete_table',ensureOwnership, function(req,res){
     var table_id = req.body.table_id;

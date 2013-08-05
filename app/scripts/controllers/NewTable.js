@@ -2,7 +2,7 @@
 
 app.controller('NewTableCtrl', ['$rootScope','$scope','Table','$location','$http','$timeout',function ($rootScope,$scope,Table,$location,$http,$timeout) {
 
-  $scope.members = [$rootScope.user.email];
+  $scope.members = [_.pick($rootScope.user, 'email', 'name','_id')];
 
   $scope.timeouts = 0;
   $scope.errorMsg = 'default'
@@ -30,7 +30,7 @@ app.controller('NewTableCtrl', ['$rootScope','$scope','Table','$location','$http
     }
 
     var alreadyMember = _.find($scope.members, function(mem){
-      return $scope.newMemberEmail === mem;
+      return $scope.newMemberEmail === mem.email;
     });
 
     if (alreadyMember){
@@ -41,7 +41,7 @@ app.controller('NewTableCtrl', ['$rootScope','$scope','Table','$location','$http
 
     $http.post('/api/check_email',{email: $scope.newMemberEmail})
     .then(function(resp){
-      $scope.members.push(resp.data.email);
+      $scope.members.push(resp.data);
       $scope.newMemberEmail = '';
     },
     function(resp){
@@ -60,6 +60,7 @@ app.controller('NewTableCtrl', ['$rootScope','$scope','Table','$location','$http
   }
 
   $scope.createTable = function(){
-    Table.newTable($scope.group.title, $scope.members);
+    var members = _.pluck($scope.members, '_id');
+    Table.newTable($scope.title, members);
   }
 }]);

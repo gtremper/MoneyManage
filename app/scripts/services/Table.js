@@ -46,13 +46,13 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
 
   var Table = {};
   Table.newTable = function(name,members){
-    $http.post('/api/create_table',{title: name, emails: members})
+    $http.post('/api/create_table',{title: name, ids: members})
     .success(function(table){
       $rootScope.user.currentTable = table._id;
       $http.post('/api/set_current_table',{table_id: table._id}).success(function(){
         console.log("set current table")
         getTables(function(){
-          $location.path('#/manage');
+          $location.path('/manage');
         });
       });
     })
@@ -72,7 +72,7 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
         tbl_id = _.keys(tables)[0];
         $rootScope.user.currentTable = tbl_id;
       } else {
-        $location.path('#/manage');
+        $location.path('/manage');
         return;
       }
 
@@ -99,14 +99,18 @@ app.factory('Table', ['$http','$rootScope','$location','$q','accessLevels','Auth
   Table.editTable = function(title,members,id){
     var body = {
       title: title,
-      new_members: members,
+      member_ids: members,
       table_id: id
     }
+    console.log("Pre edit");
     return $http.post('/api/edit_table',body)
     .then(function(resp){
       //tables[id] = resp.data;
-      getTables();
-      $location.path('#/manage');
+      console.log("Edit success");
+      getTables(function(){
+        $location.path('/manage');
+      });
+      return resp.data;
     },
     function(resp){
       console.log('ERROR ADDING MEMBER');

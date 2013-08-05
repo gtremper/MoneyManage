@@ -4,7 +4,7 @@
     <form class="control-group" name="groupname" novalidate>
       <label class="control-label" for="title">Title:</label>
       <div class="controls">
-        <input type="text" id="title" placeholder="Enter title" ng-model="group.title" name="title" required>
+        <input type="text" id="title" placeholder="Enter title" ng-model="title" name="title" required>
       </div>
     </form>
   
@@ -13,7 +13,8 @@
       <div class="controls">
         <ul class="unstyled">
           <li ng-repeat="member in members">
-             <a ng-hide="$first" ng-click="removeMember(member)"><i class="icon-remove"></i></a> {{member}}
+             <a ng-hide="$first" ng-click="removeMember(member)"><i class="icon-remove"></i></a>
+             <span ng-class="{red: member.unregistered}">{{member.name}} ({{member.email}})</span>
           </li>
         </ul>
         <form ng-submit="addMember()" novalidate name="memberEmail" style="position:relative">
@@ -26,6 +27,7 @@
       </div>
     </div>
     <div class="controls">
+      <button ng-disabled="!groupname.$valid" class="btn btn-success" ng-click="createTable()">Create</button>
       <a class="btn btn-warning" ng-href="#/manage">Cancel</a>
     </div>
   </div>

@@ -5,17 +5,14 @@ app.controller('EditTableCtrl', ['$rootScope','$scope','$routeParams','$location
   Table.getAllTables().then(function(tables){
     var table = tables[$routeParams.id];
 
-    $scope.members = [$rootScope.user.email];
-    $scope.members.push.apply($scope.members,table.members);
+    $scope.title = table.title;
+    $scope.members = [_.pick($rootScope.user,'email','name','_id')];
+    $scope.members.push.apply($scope.members,_.values(table.members));
+    console.log($scope.members);
+    console.log(table.members);
 
     $scope.timeouts = 0;
     $scope.errorMsg = 'default'
-  
-    $scope.removeMember = function(mem){
-      $scope.members = _.reject($scope.members, function(m){
-        return mem===m;
-      });
-    }
   
     function error(msg,time){
       $scope.errorMsg = msg;
@@ -25,7 +22,28 @@ app.controller('EditTableCtrl', ['$rootScope','$scope','$routeParams','$location
       },time);
       return;
     }
-  
+
+    $scope.removeMember = function(mem){
+
+      var dirty = false;
+      var user_id = mem._id;
+      _.each(table.transactions, function(trans){
+        if (trans.owner===user_id || _.contains(trans.split,user_id)){
+          console.log(trans);
+          dirty = true;
+        }
+      });
+
+      if (dirty){
+        error("Can't remove user involved in a payment",3000);
+        return;
+      }
+
+
+      $scope.members = _.reject($scope.members, function(m){
+        return mem===m;
+      });
+    }
   
     $scope.addMember = function(){
       if (!$scope.memberEmail.$valid){
@@ -45,7 +63,7 @@ app.controller('EditTableCtrl', ['$rootScope','$scope','$routeParams','$location
   
       $http.post('/api/check_email',{email: $scope.newMemberEmail})
       .then(function(resp){
-        $scope.members.push(resp.data.email);
+        $scope.members.push(resp.data);
         $scope.newMemberEmail = '';
       },
       function(resp){
@@ -64,10 +82,8 @@ app.controller('EditTableCtrl', ['$rootScope','$scope','$routeParams','$location
     }
 
     $scope.save = function(){
-      Table.editTable($scope.title,$scope.emails,$routeParams.id)
-      .then(function(){
-        $location.path('/manage');
-      });
+      var ids = _.pluck($scope.members,'_id');
+      Table.editTable($scope.title, ids, $routeParams.id);
     };
 
     $scope.delete = function(){
