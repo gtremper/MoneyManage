@@ -1,20 +1,30 @@
-<h1 style="text-align:center;margin-bottom:60px;">Manage money easier than ever before</h1>
-<div class="signin-container">
-  <div class="hero-unit">
-    <h3>Register <span class="signin-toggle">or <a href="#/signin">sign in</a></span></h3>
+<style type="text/css">
+html {
+  background: url(img/Golden-Gate-Bridge-in-San-Francisco.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+</style>
 
-    <form novalidate ng-submit="register()" name="form">
-      <div>
-        <input type="text" placeholder="name" name="name" ng-model="newuser.name" required>
-      </div>
-      <div>
-        <input type="email" placeholder="email" name="email" ng-model="newuser.email" required>
-      </div>
-      <div>
-        <input type="password" placeholder="password of at least 4 characters" name="password" ng-model="newuser.password" ng-minlength="4" required>
-      </div>
-      <button ng-disabled="!form.$valid" type="submit" class="btn btn-primary">Register</button>
-    </form>
-    <p class="red" style="text-align:center" ng-show="userExists">A user with this email already exists</p>
-  </div>
+
+<div class="signin-container panel">
+  <h1 class="banner-title">Problems managing money?</h1>
+  <h3>Register <span class="signin-toggle">or <a href="#/signin">sign in</a></span></h3>
+
+  <form novalidate ng-submit="register()" name="form">
+    <div>
+      <input type="text" placeholder="name" name="name" ng-model="newuser.name" required>
+    </div>
+    <div>
+      <input type="email" placeholder="email" name="email" ng-model="newuser.email" required>
+    </div>
+    <div>
+      <input type="password" placeholder="password of at least 4 characters" name="password" ng-model="newuser.password" ng-minlength="4" required>
+    </div>
+    <button ng-disabled="!form.$valid" type="submit" class="btn btn-primary">Register</button>
+  </form>
+<p class="red" style="text-align:center" ng-show="userExists">A user with this email already exists</p>
 </div>
+
