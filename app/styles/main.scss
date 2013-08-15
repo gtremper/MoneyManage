@@ -1,4 +1,3 @@
-
 @import "bootstrap.css";
 @import "bootstrap-sass/lib/bootstrap";
 
@@ -7,6 +6,10 @@ body {
   font-size: 14px;
   font-family: "Open Sans",serif;
   background: transparent;
+}
+
+.dropdown-menu .divider{
+  border-bottom: #999;
 }
 
 .container{

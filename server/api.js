@@ -30,8 +30,6 @@ module.exports = function(app){
   app.post('/api/update_account', function(req,res){
     var name = req.body.name || req.user.name;
     var email = req.body.email || req.user.email;
-    console.log(name);
-    console.log(email);
     Users
       .findById(req.user._id)
       .exec(function(err,user){
@@ -59,7 +57,6 @@ module.exports = function(app){
   app.post('/api/create_table',function(req,res){
     var ids = req.body.ids;
     var title = req.body.title;
-    console.log(ids)
     new Tables({
       title: title,
       members: ids,
@@ -205,7 +202,6 @@ module.exports = function(app){
       function(err,tbl){
         if (err) return res.send(500,{error:'database error'});
         if (!tbl) return res.send(400,{error:'table not found'});
-        console.log(tbl.transactions);
         res.json(tbl.transactions);
       });
   });
