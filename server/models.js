@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     userRoles = require('./routingConfig').userRoles;
 
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://gtremper:fessieisadog@dharma.mongohq.com:10080/money-manage');
 
 /** USER **/
 var UserSchema = new Schema({
