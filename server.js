@@ -21,7 +21,7 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.static(path.join(__dirname, 'app')));
-  app.use(express.static(path.join(__dirname, '.tmp'))); // only for development
+  //app.use(express.static(path.join(__dirname, '.tmp'))); // only for development
   app.use(express.cookieParser());
   app.use(express.session({secret: 'keyboard cat'}));
   app.use(passport.initialize());
