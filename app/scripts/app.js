@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('MoneyManageApp', ['ui.bootstrap','ngCookies']);
+var app = angular.module('MoneyManageApp', ['ui','ui.bootstrap','ngCookies']);
 
 /* Authentication constants */
 (function(app){
