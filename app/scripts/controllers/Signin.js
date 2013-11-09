@@ -6,7 +6,7 @@ app.controller('SigninCtrl', ['$scope','$location','$timeout','Auth',function ($
   $scope.nouser = false;
   $scope.invalid_password = false;
 
-  $scope.login = function(){
+  $scope.submitLogin = function(){
     Auth.login({
       email: $scope.login.email,
       password: $scope.login.password,
@@ -30,6 +30,14 @@ app.controller('SigninCtrl', ['$scope','$location','$timeout','Auth',function ($
         },3000);
       }
     });
+  };
+
+  //Login to demo account
+  $scope.demo = function demo(){
+    $scope.login.email = "test@test.com";
+    $scope.login.password = "derp";
+    $scope.login.rememberme = false;
+    $scope.submitLogin();
   };
 
 }]);

@@ -15,7 +15,7 @@ html {
   <h1 class="banner-title">Problems managing money?</h1>
   <h3>Sign in <span class="signin-toggle">or <a href="#/register">register</a></span></h3>
 
-  <form ng-submit="login()" name="form" novalidate>
+  <form ng-submit="submitLogin()" name="form" novalidate>
     <div>
       <input type="email" placeholder="email" name="email" ng-model="login.email" required>
     </div>
@@ -26,6 +26,7 @@ html {
       <input type="checkbox" ng-model="login.rememberme" ng-checked="true"> Remember me
     </label>
     <button ng-disabled="!form.$valid" type="submit" class="btn btn-primary">Sign in</button>
+    <button ng-click="demo()" type="button" class="btn btn-info pull-right" tabindex="-1">See a demo</button>
   </form>
   <p class="red" style="text-align:center;" ng-show="nouser">No user with that email. <a ng-href="#/register">Register?</a></p>
   <p class="red" style="text-align:center;" ng-show="invalid_password">Invalid password.</p>
