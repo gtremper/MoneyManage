@@ -1493,12 +1493,8 @@ input[type="checkbox"][readonly] {
 input:focus:invalid,
 textarea:focus:invalid,
 select:focus:invalid {
-  /*
   color: #b94a48;
   border-color: #ee5f5b;
-  */
-  color: #00aa00;
-  border-color: #00aa00;
 }
 input:focus:invalid:focus,
 textarea:focus:invalid:focus,
